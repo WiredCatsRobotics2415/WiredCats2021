@@ -45,6 +45,13 @@ public class RobotMap {
     public static final int LEFT_TURRET_MOTOR = 0;
     public static final int RIGHT_TURRET_MOTOR = 0;
     public static final int TURN_TURRET_MOTOR = 0;
+    public static final int TURRET_ENCODER = 0;
+    public static final boolean TURRET_ENCODER_REV = false;
+
+    public static final int LEFT_GEARBOX_MOTOR = 0;
+    public static final int RIGHT_GEARBOX_MOTOR = 0;
+    public static final int LEFT_GEARBOX_PISTON = 0;
+    public static final int RIGHT_GEARBOX_PISTON = 0;
 
     // PCM
     public static final int PCM_ID = 10;

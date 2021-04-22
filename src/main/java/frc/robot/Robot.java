@@ -4,10 +4,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.subsystems.Gearbox;
 import frc.subsystems.Intake;
+import frc.subsystems.Turret;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -17,7 +20,10 @@ import frc.subsystems.Intake;
  * project.
  */
 public class Robot extends TimedRobot {
-    private Intake intake;
+    private static Intake intake;
+    private static Gearbox gearbox;
+    private static Turret turret;
+    private static PowerDistributionPanel pdp;
 
     /**
      * This function is run when the robot is first started up and should be used
