@@ -127,9 +127,10 @@ public class Turret {
             error = this.turretMotor.setSelectedSensorPosition(this.encoder.getRotationDegrees(), 0,
                     Constants.kCanTimeoutMs);
         }
-        if(!Constants.ZEROING) {
+        if(!Constants.ZEROING) { //might want to have separate zeroing constant for turret
             this.turretController.setSetpoint(this.encoder.getRotationDegrees());
         }
+        this.turns = 0; //here is what I missed, that is why were spin the motors when zeroing
     }
 
 }
