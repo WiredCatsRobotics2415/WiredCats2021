@@ -22,6 +22,8 @@ public class Constants {
     public static final PIDValue DRIVE_DISTANCE_PID = new PIDValue(8, 0.0, 0.0);
     public static final PIDValue TURNING_PID = new PIDValue(1.0,0.0,0.0);
 
+    public static final PIDValue HOOD_PID = new PIDValue(0.0, 0.0, 0.0);
+
     public static final double KS = 0.164, KV = 0.97, KA = 0.1;// 1.0;
 
     public static final double FRONT_LEFT_AZIMUTH_ENCODER_OFFSET = 303.4-180;//305.86-180;//304.56 - 180.33;// 304-180; // offset by 90
@@ -31,7 +33,8 @@ public class Constants {
     public static final double MOTORMIN = 0.05;
     public static final double DEADBAND = 0.1;
 
-    public static final double TURRET_ENCODER_OFFSET = 0;
+    public static final double TURN_TURRET_ENCODER_OFFSET = 0;
+    public static final double HOOD_TURRET_ENCODER_OFFSET = 0;
 
     public static NeutralMode DRIVE_BREAK_MODE = NeutralMode.Brake;
 

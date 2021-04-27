@@ -268,6 +268,7 @@ public class SwerveModule {
         if(!Constants.ZEROING) {
             this.azimuthController.setSetpoint(this.azimuthEncoder.getRotationDegrees());
         }
+        this.turns = 0;
     }
 
     public void zeroDriveEncoder() {

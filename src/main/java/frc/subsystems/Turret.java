@@ -7,6 +7,10 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -20,7 +24,10 @@ public class Turret {
     private TalonFX turretMotor;
     private TalonFxTunable turretController;
 
-    private PWMAbsoluteEncoder encoder;
+    private PWMAbsoluteEncoder turnEncoder;
+
+    private CANSparkMax hoodMotor;
+    private PWMAbsoluteEncoder hoodEncoder;
 
     private boolean turnReversed;
     private double prevTurnSetpoint;
@@ -32,7 +39,7 @@ public class Turret {
         this.rightShooterTalon = new TalonFX(RobotMap.RIGHT_TURRET_MOTOR);
         this.turretMotor = new TalonFX(RobotMap.TURN_TURRET_MOTOR);
 
-        this.encoder = new PWMAbsoluteEncoder(RobotMap.TURRET_ENCODER, Constants.TURRET_ENCODER_OFFSET, RobotMap.TURRET_ENCODER_REV);
+        this.turnEncoder = new PWMAbsoluteEncoder(RobotMap.TURN_TURRET_ENCODER, Constants.TURN_TURRET_ENCODER_OFFSET, RobotMap.TURN_TURRET_ENCODER_REV);
         // declare settings for motors
         this.leftShooterTalon.configFactoryDefault(Constants.kCanTimeoutMs);
         this.rightShooterTalon.configFactoryDefault(Constants.kCanTimeoutMs);
@@ -83,11 +90,31 @@ public class Turret {
         this.turretController = new TalonFxTunable(this.turretMotor, null, ControlMode.Position);
 
         this.shooterController.setSetpoint(0);
-        this.turretController.setSetpoint(encoder.getRotationDegrees()); // should be initial encoder value
+        this.turretController.setSetpoint(turnEncoder.getRotationDegrees()); // should be initial encoder value
+
+        this.hoodMotor = new CANSparkMax(RobotMap.HOOD_TURRET_MOTOR, CANSparkMax.MotorType.kBrushless);
+        this.hoodMotor.restoreFactoryDefaults();
+        this.hoodMotor.setIdleMode(IdleMode.kBrake);
+
+        this.hoodEncoder = new PWMAbsoluteEncoder(RobotMap.HOOD_TURRET_ENCODER, Constants.HOOD_TURRET_ENCODER_OFFSET, RobotMap.HOOD_TURRET_ENCODER_REV);
+
+        this.hoodMotor.getEncoder().setPositionConversionFactor(3000);
+        this.hoodMotor.getEncoder().setPosition(hoodEncoder.getRotationDegrees());
+
+        CANPIDController hoodPID = this.hoodMotor.getPIDController();
+        hoodPID.setP(Constants.HOOD_PID.getKP());
+        hoodPID.setI(Constants.HOOD_PID.getKI());
+        hoodPID.setD(Constants.HOOD_PID.getKD());
+        hoodPID.setReference(hoodEncoder.getRotationDegrees(), ControlType.kPosition);
 
         turnReversed = false;
         prevTurnSetpoint = this.turretController.getSetpoint();
         turns = 0;
+    }
+
+    public Turret(boolean reversed) {
+        this();
+        turnReversed = reversed;
     }
 
     public void setShooterSpeed(double speed) {
@@ -119,18 +146,29 @@ public class Turret {
         this.turretController.run();
     }
 
-    public void zeroEncoder() {
+    public void zeroTurret() {
         this.turretMotor.set(ControlMode.PercentOutput, 0);
-        ErrorCode error = this.turretMotor.setSelectedSensorPosition(this.encoder.getRotationDegrees(), 0, Constants.kCanTimeoutMs);
+        ErrorCode error = this.turretMotor.setSelectedSensorPosition(this.turnEncoder.getRotationDegrees(), 0, Constants.kCanTimeoutMs);
         if (!error.equals(ErrorCode.OK)) {
             System.out.println("failed zero");
-            error = this.turretMotor.setSelectedSensorPosition(this.encoder.getRotationDegrees(), 0,
+            error = this.turretMotor.setSelectedSensorPosition(this.turnEncoder.getRotationDegrees(), 0,
                     Constants.kCanTimeoutMs);
         }
         if(!Constants.ZEROING) { //might want to have separate zeroing constant for turret
-            this.turretController.setSetpoint(this.encoder.getRotationDegrees());
+            this.turretController.setSetpoint(this.turnEncoder.getRotationDegrees());
         }
-        this.turns = 0; //here is what I missed, that is why were spin the motors when zeroing
+    }
+
+    public void setHoodAngle(double angle) {
+        this.hoodMotor.set(angle);
+    }
+
+    public void zeroHood() {
+        this.hoodMotor.stopMotor();
+        this.hoodMotor.getEncoder().setPosition(this.hoodEncoder.getRotationDegrees());
+        if (!Constants.ZEROING) {
+            this.hoodMotor.set(this.hoodEncoder.getRotationDegrees());
+        }
     }
 
 }

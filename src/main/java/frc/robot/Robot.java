@@ -4,10 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.subsystems.Gearbox;
 import frc.subsystems.Intake;
 import frc.subsystems.Turret;
@@ -24,6 +23,8 @@ public class Robot extends TimedRobot {
     private static Gearbox gearbox;
     private static Turret turret;
     private static PowerDistributionPanel pdp;
+    private static Compressor compressor;
+    public static final String saveName = "WiredCats2021";
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -32,6 +33,10 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         intake = new Intake();
+        gearbox = new Gearbox();
+        turret = new Turret();
+        pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
+        compressor = new Compressor(RobotMap.PCM_ID);
     }
 
     /**
@@ -66,15 +71,6 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
-        switch (m_autoSelected) {
-        case kCustomAuto:
-            // Put custom auto code here
-            break;
-        case kDefaultAuto:
-        default:
-            // Put default auto code here
-            break;
-        }
     }
 
     /** This function is called once when teleop is enabled. */
@@ -105,5 +101,9 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during test mode. */
     @Override
     public void testPeriodic() {
+    }
+
+    public static double getPDPVoltage() {
+        return pdp.getVoltage();
     }
 }
