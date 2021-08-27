@@ -26,10 +26,10 @@ public class Constants {
 
     public static final double KS = 0.164, KV = 0.97, KA = 0.1;// 1.0;
 
-    public static final double FRONT_LEFT_AZIMUTH_ENCODER_OFFSET = 303.4-180;//305.86-180;//304.56 - 180.33;// 304-180; // offset by 90
-    public static final double FRONT_RIGHT_AZIMUTH_ENCODER_OFFSET = 48.8+180;//72.75+180.0;//163.28 + 180;// 165.24-180;//146.5+180;//5.976+180;
-    public static final double BACK_LEFT_AZIMUTH_ENCODER_OFFSET = 219.02;//218;// 219.7;
-    public static final double BACK_RIGHT_AZIMUTH_ENCODER_OFFSET = 285.4;//212.35;//214.1-4;//211 + 2;// 211.6;
+    public static final double FRONT_LEFT_AZIMUTH_ENCODER_OFFSET = 0;//305.86-180;//304.56 - 180.33;// 304-180; // offset by 90
+    public static final double FRONT_RIGHT_AZIMUTH_ENCODER_OFFSET = 0;//72.75+180.0;//163.28 + 180;// 165.24-180;//146.5+180;//5.976+180;
+    public static final double BACK_LEFT_AZIMUTH_ENCODER_OFFSET = 0;//218;// 219.7;
+    public static final double BACK_RIGHT_AZIMUTH_ENCODER_OFFSET = 0;//212.35;//214.1-4;//211 + 2;// 211.6;
     public static final double MOTORMIN = 0.05;
     public static final double DEADBAND = 0.1;
 
@@ -48,7 +48,7 @@ public class Constants {
     public static final boolean SWERVE_TUNING = false;
 
     // logging
-    public static final boolean SWERVE_LOGGING = true;
+    public static final boolean SWERVE_LOGGING = false;
     public static final SwerveModuleLoggerMode SWERVE_LOGGING_MODE = SwerveModuleLoggerMode.DRIVE_WCURRENT;
 
 }

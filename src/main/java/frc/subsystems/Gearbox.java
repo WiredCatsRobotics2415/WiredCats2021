@@ -4,9 +4,9 @@ public class Gearbox {
     private Spindexer spindexer;
     private Feeder feeder;
 
-    public Gearbox() {
-        this.spindexer = new Spindexer();
-        this.feeder = new Feeder();
+    public Gearbox(Spindexer spindexer, Feeder feeder) {
+        this.spindexer = spindexer;
+        this.feeder = feeder;
     }
 
     public void toggleClimber() {

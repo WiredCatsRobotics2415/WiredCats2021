@@ -7,9 +7,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import frc.subsystems.Gearbox;
 import frc.subsystems.Intake;
+import frc.subsystems.SwerveDrive;
 import frc.subsystems.Turret;
+import frc.subsystems.Spindexer;
+import frc.subsystems.Feeder;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -20,10 +24,15 @@ import frc.subsystems.Turret;
  */
 public class Robot extends TimedRobot {
     private static Intake intake;
+    private static Spindexer spindexer;
+    private static Feeder feeder;
     private static Gearbox gearbox;
     private static Turret turret;
     private static PowerDistributionPanel pdp;
     private static Compressor compressor;
+    private static XboxController controller;
+    private static SwerveDrive swerveDrive;
+    private static OI oi;
     public static final String saveName = "WiredCats2021";
 
     /**
@@ -32,11 +41,15 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-        intake = new Intake();
-        gearbox = new Gearbox();
-        turret = new Turret();
-        pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
-        compressor = new Compressor(RobotMap.PCM_ID);
+        //intake = new Intake();
+        //spindexer = new Spindexer();
+        //feeder = new Feeder();
+        //gearbox = new Gearbox(spindexer, feeder);
+        //turret = new Turret();
+        //pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
+        //compressor = new Compressor(RobotMap.PCM_ID);
+        swerveDrive = new SwerveDrive(Constants.SWERVE_TUNING, Constants.SWERVE_LOGGING);
+        oi = new OI();
     }
 
     /**
@@ -76,11 +89,37 @@ public class Robot extends TimedRobot {
     /** This function is called once when teleop is enabled. */
     @Override
     public void teleopInit() {
+        Constants.ZEROING = false;
     }
 
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
+        if (!Constants.ZEROING) {
+            if (oi.getRightTurningToggle()) {
+                System.out.println("Right turning: " + swerveDrive.toggleRightTurning());
+            } else if (oi.getLeftTurningToggle()) {
+                System.out.println("Left turning: " + swerveDrive.toggleLeftTurning());
+            }
+            swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
+            if (oi.getRawButtonPressed(14)) {
+                System.out.println("zero Encoders");
+                swerveDrive.zeroEncoders();
+            }
+        } else {
+            if (oi.getRawButtonPressed(1)) {
+                swerveDrive.printModuleEncoders(Constants.SwerveModuleName.FRONT_LEFT);
+            }
+            if (oi.getRawButtonPressed(2)) {
+                swerveDrive.printModuleEncoders(Constants.SwerveModuleName.FRONT_RIGHT);
+            }
+            if (oi.getRawButtonPressed(3)) {
+                swerveDrive.printModuleEncoders(Constants.SwerveModuleName.BACK_LEFT);
+            }
+            if (oi.getRawButtonPressed(4)) {
+                swerveDrive.printModuleEncoders(Constants.SwerveModuleName.BACK_RIGHT);
+            }
+        }
     }
 
     /** This function is called once when the robot is disabled. */
@@ -96,11 +135,13 @@ public class Robot extends TimedRobot {
     /** This function is called once when test mode is enabled. */
     @Override
     public void testInit() {
+        Constants.ZEROING = true;
     }
 
     /** This function is called periodically during test mode. */
     @Override
     public void testPeriodic() {
+        teleopPeriodic();
     }
 
     public static double getPDPVoltage() {
