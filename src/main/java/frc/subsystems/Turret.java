@@ -59,7 +59,7 @@ public class Turret {
         this.turretMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
                 Constants.kCanTimeoutMs);
         // set ratio of turret motor turns to turret turns
-        this.turretMotor.configSelectedFeedbackCoefficient(1/* ratio of motor turns to turret turns */, 0,
+        this.turretMotor.configSelectedFeedbackCoefficient(0.05, 0,
                 Constants.kCanTimeoutMs);
         // set brake modes
         this.leftShooterTalon.setNeutralMode(NeutralMode.Coast);

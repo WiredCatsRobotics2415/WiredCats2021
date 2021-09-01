@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
 import frc.subsystems.Gearbox;
 import frc.subsystems.Intake;
 import frc.subsystems.SwerveDrive;
@@ -30,7 +29,6 @@ public class Robot extends TimedRobot {
     private static Turret turret;
     private static PowerDistributionPanel pdp;
     private static Compressor compressor;
-    private static XboxController controller;
     private static SwerveDrive swerveDrive;
     private static OI oi;
     public static final String saveName = "WiredCats2021";
@@ -89,7 +87,6 @@ public class Robot extends TimedRobot {
     /** This function is called once when teleop is enabled. */
     @Override
     public void teleopInit() {
-        Constants.ZEROING = false;
     }
 
     /** This function is called periodically during operator control. */
@@ -135,13 +132,11 @@ public class Robot extends TimedRobot {
     /** This function is called once when test mode is enabled. */
     @Override
     public void testInit() {
-        Constants.ZEROING = true;
     }
 
     /** This function is called periodically during test mode. */
     @Override
     public void testPeriodic() {
-        teleopPeriodic();
     }
 
     public static double getPDPVoltage() {

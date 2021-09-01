@@ -26,10 +26,10 @@ public class Constants {
 
     public static final double KS = 0.164, KV = 0.97, KA = 0.1;// 1.0;
 
-    public static final double FRONT_LEFT_AZIMUTH_ENCODER_OFFSET = 0;//305.86-180;//304.56 - 180.33;// 304-180; // offset by 90
-    public static final double FRONT_RIGHT_AZIMUTH_ENCODER_OFFSET = 0;//72.75+180.0;//163.28 + 180;// 165.24-180;//146.5+180;//5.976+180;
-    public static final double BACK_LEFT_AZIMUTH_ENCODER_OFFSET = 0;//218;// 219.7;
-    public static final double BACK_RIGHT_AZIMUTH_ENCODER_OFFSET = 0;//212.35;//214.1-4;//211 + 2;// 211.6;
+    public static final double FRONT_LEFT_AZIMUTH_ENCODER_OFFSET = 36.2+90;//-322.7;//36.2+90;//305.86-180;//304.56 - 180.33;// 304-180; // offset by 90
+    public static final double FRONT_RIGHT_AZIMUTH_ENCODER_OFFSET = 318.9-90;//-50.2;//318.9-90;//72.75+180.0;//163.28 + 180;// 165.24-180;//146.5+180;//5.976+180;
+    public static final double BACK_LEFT_AZIMUTH_ENCODER_OFFSET = 288.6+90;//-74.5;//288.6+90;//218;// 219.7;
+    public static final double BACK_RIGHT_AZIMUTH_ENCODER_OFFSET = 220-90;//-126.2;//220-90;//212.35;//214.1-4;//211 + 2;// 211.6;
     public static final double MOTORMIN = 0.05;
     public static final double DEADBAND = 0.1;
 
