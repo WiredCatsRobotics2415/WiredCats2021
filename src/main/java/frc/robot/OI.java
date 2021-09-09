@@ -34,17 +34,28 @@ public class OI {
         return val;
     }
 
+
+    public boolean getSpindexerToggle() {
+        return this.controller.getRawButtonPressed(1); // square button
+    }
+
+    public boolean getFeederToggle() {
+        return this.controller.getRawButtonPressed(4); //triangle button
+    }
+
     public boolean getIntakeToggle() {
-        return this.controller.getRawButtonPressed(3); // right bumper
+        return this.controller.getRawButtonPressed(2); // x button
     }
 
     public boolean getIntakeExtensionToggle() {
-        return this.controller.getRawButtonPressed(4); // left bumper
+        return this.controller.getRawButtonPressed(3); // circle button
     }
 
+    /*
     public boolean getCompressorToggle() {
-        return this.controller.getRawButtonPressed(2); // x button
+        return this.controller.getRawButtonPressed(4); // triangle button
     }
+    */
 
     public boolean getRightTurningToggle() {
         return this.controller.getRawButtonPressed(6); // back right

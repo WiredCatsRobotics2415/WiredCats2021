@@ -10,6 +10,8 @@ public class Gearbox {
     }
 
     public void toggleClimber() {
+        spindexer.runSpindexer(0);
+        feeder.runFeeder(0);
         spindexer.switchClimber();
         feeder.switchClimber();
     }

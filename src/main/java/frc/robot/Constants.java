@@ -51,4 +51,6 @@ public class Constants {
     public static final boolean SWERVE_LOGGING = false;
     public static final SwerveModuleLoggerMode SWERVE_LOGGING_MODE = SwerveModuleLoggerMode.DRIVE_WCURRENT;
 
+    //if true then the navX and rio are facing up relative to the field
+    public static final boolean NAVX_FACING_UP = false;
 }

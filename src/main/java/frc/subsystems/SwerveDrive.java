@@ -67,6 +67,7 @@ public class SwerveDrive {
         Vector2D strafeVector = Vector2D.vectorFromRectForm(x, y);
         if (fieldOriented) {
             double yaw = navX.getYaw();
+            if (!Constants.NAVX_FACING_UP) yaw *= -1;
             strafeVector = strafeVector.rotate(yaw, true);
         }
         Vector2D fLVector = Vector2D.addVectors(strafeVector, getTurnAngleVector(r, frontLeftModule));
@@ -106,6 +107,7 @@ public class SwerveDrive {
         Vector2D velocityVector = Vector2D.vectorFromRectForm(xVelocity, yVelocity);
         if (fieldOriented) {
             double yaw = navX.getYaw();
+            if (!Constants.NAVX_FACING_UP) yaw *= -1;
             velocityVector = velocityVector.rotate(yaw, true);
         }
         //Vector2D scaledVelocityVector = velocityVector.scale(1-Math.abs(rotationPercent));
@@ -234,7 +236,7 @@ public class SwerveDrive {
     }
 
     public double getYaw() {
-        return this.navX.getYaw();
+        return Constants.NAVX_FACING_UP ? this.navX.getYaw() : -this.navX.getYaw();
     }
 
     public void printCurrents() {

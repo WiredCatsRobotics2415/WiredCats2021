@@ -39,11 +39,11 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-        //intake = new Intake();
-        //spindexer = new Spindexer();
-        //feeder = new Feeder();
-        //gearbox = new Gearbox(spindexer, feeder);
-        //turret = new Turret();
+        intake = new Intake();
+        spindexer = new Spindexer();
+        feeder = new Feeder();
+        gearbox = new Gearbox(spindexer, feeder);
+        turret = new Turret();
         //pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
         //compressor = new Compressor(RobotMap.PCM_ID);
         swerveDrive = new SwerveDrive(Constants.SWERVE_TUNING, Constants.SWERVE_LOGGING);
@@ -93,15 +93,26 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         if (!Constants.ZEROING) {
+            /*
             if (oi.getRightTurningToggle()) {
                 System.out.println("Right turning: " + swerveDrive.toggleRightTurning());
             } else if (oi.getLeftTurningToggle()) {
                 System.out.println("Left turning: " + swerveDrive.toggleLeftTurning());
             }
+            */
             swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
             if (oi.getRawButtonPressed(14)) {
                 System.out.println("zero Encoders");
                 swerveDrive.zeroEncoders();
+            }
+            if (oi.getFeederToggle()) {
+                feeder.runFeeder(0.25);
+            }
+            if (oi.getSpindexerToggle()) {
+                spindexer.runSpindexer(0.25);
+            }
+            if (oi.getIntakeToggle()) {
+                intake.startMotor();
             }
         } else {
             if (oi.getRawButtonPressed(1)) {

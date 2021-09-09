@@ -28,8 +28,8 @@ public class Feeder {
         this.motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40, 40, .1));
         this.motor.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
 
-        this.solenoid = new Solenoid(RobotMap.LEFT_GEARBOX_PISTON);
-        this.solenoid.set(false);
+        //this.solenoid = new Solenoid(RobotMap.LEFT_GEARBOX_PISTON);
+        //this.solenoid.set(false);
 
         this.climber = false;
     }

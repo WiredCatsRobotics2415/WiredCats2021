@@ -15,6 +15,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.util.PWMAbsoluteEncoder;
+import frc.util.pid.PIDValue;
 import frc.util.pid.TalonFxTunable;
 
 public class Turret {
@@ -39,7 +40,8 @@ public class Turret {
         this.rightShooterTalon = new TalonFX(RobotMap.RIGHT_TURRET_MOTOR);
         this.turretMotor = new TalonFX(RobotMap.TURN_TURRET_MOTOR);
 
-        this.turnEncoder = new PWMAbsoluteEncoder(RobotMap.TURN_TURRET_ENCODER, Constants.TURN_TURRET_ENCODER_OFFSET, RobotMap.TURN_TURRET_ENCODER_REV);
+        
+        //this.turnEncoder = new PWMAbsoluteEncoder(RobotMap.TURN_TURRET_ENCODER, Constants.TURN_TURRET_ENCODER_OFFSET, RobotMap.TURN_TURRET_ENCODER_REV);
         // declare settings for motors
         this.leftShooterTalon.configFactoryDefault(Constants.kCanTimeoutMs);
         this.rightShooterTalon.configFactoryDefault(Constants.kCanTimeoutMs);
@@ -59,7 +61,7 @@ public class Turret {
         this.turretMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
                 Constants.kCanTimeoutMs);
         // set ratio of turret motor turns to turret turns
-        this.turretMotor.configSelectedFeedbackCoefficient(0.05, 0,
+        this.turretMotor.configSelectedFeedbackCoefficient(1/*ratio*/, 0,
                 Constants.kCanTimeoutMs);
         // set brake modes
         this.leftShooterTalon.setNeutralMode(NeutralMode.Coast);
@@ -85,12 +87,12 @@ public class Turret {
         this.rightShooterTalon.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
         this.turretMotor.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
 
-        this.shooterController = new TalonFxTunable(this.rightShooterTalon, null, ControlMode.Velocity);
+        this.shooterController = new TalonFxTunable(this.rightShooterTalon, new PIDValue(0, 0, 0), ControlMode.Velocity);
         this.leftShooterTalon.set(ControlMode.Follower, this.rightShooterTalon.getDeviceID());
-        this.turretController = new TalonFxTunable(this.turretMotor, null, ControlMode.Position);
+        this.turretController = new TalonFxTunable(this.turretMotor, new PIDValue(0, 0, 0), ControlMode.Position);
 
         this.shooterController.setSetpoint(0);
-        this.turretController.setSetpoint(turnEncoder.getRotationDegrees()); // should be initial encoder value
+        //this.turretController.setSetpoint(turnEncoder.getRotationDegrees()); // should be initial encoder value
 
         this.hoodMotor = new CANSparkMax(RobotMap.HOOD_TURRET_MOTOR, CANSparkMax.MotorType.kBrushless);
         this.hoodMotor.restoreFactoryDefaults();
