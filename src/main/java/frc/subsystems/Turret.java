@@ -87,7 +87,7 @@ public class Turret {
         this.rightShooterTalon.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
         this.turretMotor.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
 
-        this.shooterController = new TalonFxTunable(this.rightShooterTalon, new PIDValue(0, 0, 0), ControlMode.Velocity);
+        this.shooterController = new TalonFxTunable(this.rightShooterTalon, new PIDValue(20, 0, 0), ControlMode.Velocity);
         this.leftShooterTalon.set(ControlMode.Follower, this.rightShooterTalon.getDeviceID());
         this.turretController = new TalonFxTunable(this.turretMotor, new PIDValue(0, 0, 0), ControlMode.Position);
 
@@ -173,4 +173,8 @@ public class Turret {
         }
     }
 
+    public void printEncoderValues() {
+        System.out.println("Turret turn: " + this.turnEncoder.getRotationDegrees());
+        System.out.println("Turret hood: " + this.hoodEncoder.getRotationDegrees());
+    }
 }

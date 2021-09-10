@@ -39,16 +39,28 @@ public class OI {
         return this.controller.getRawButtonPressed(1); // square button
     }
 
-    public boolean getFeederToggle() {
+    public boolean getClimberToggle() {
         return this.controller.getRawButtonPressed(4); //triangle button
     }
 
+    public boolean getClimberUp() {
+        return this.controller.getRawButtonPressed(6); //right bumper button
+    }
+
+    public boolean getClimberDown() {
+        return this.controller.getRawButtonPressed(5); //left bumper button
+    }
+    
     public boolean getIntakeToggle() {
         return this.controller.getRawButtonPressed(2); // x button
     }
 
     public boolean getIntakeExtensionToggle() {
         return this.controller.getRawButtonPressed(3); // circle button
+    }
+
+    public double getShooterSpeed() {
+        return this.controller.getRawAxis(4); // right trigger
     }
 
     /*

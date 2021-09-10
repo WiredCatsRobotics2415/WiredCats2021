@@ -15,6 +15,7 @@ public class Spindexer {
     private TalonFX motor;
     private Solenoid solenoid; 
     private boolean climber;
+    boolean running;
 
     public Spindexer() {
         this.motor = new TalonFX(RobotMap.RIGHT_GEARBOX_MOTOR);
@@ -32,19 +33,36 @@ public class Spindexer {
         this.solenoid.set(false);
 
         this.climber = false;
+        running = false;
     }
 
     public void switchClimber() {
         this.climber = !climber;
         this.solenoid.set(climber);
+        this.motor.set(ControlMode.PercentOutput, 0);
+        running = false;
     }
 
     public void runSpindexer(double speed) {
-        if (!climber) this.motor.set(ControlMode.PercentOutput, speed);
+        if (!climber) {
+            this.motor.set(ControlMode.PercentOutput, speed);
+        }
     }
 
     public void runClimber(double speed) {
-        if (climber) this.motor.set(ControlMode.PercentOutput, speed);
+        if (!climber) {
+            this.motor.set(ControlMode.PercentOutput, speed);
+        }
+    }
+
+    public void toggleMotor(double speed) {
+        if (running) {
+            this.motor.set(ControlMode.PercentOutput, 0);
+            running = false;
+        } else {
+            this.motor.set(ControlMode.PercentOutput, speed);
+            running = true;
+        }
     }
     
     public boolean getClimber() {

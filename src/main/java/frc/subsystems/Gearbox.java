@@ -3,10 +3,12 @@ package frc.subsystems;
 public class Gearbox {
     private Spindexer spindexer;
     private Feeder feeder;
+    private boolean climber;
 
     public Gearbox(Spindexer spindexer, Feeder feeder) {
         this.spindexer = spindexer;
         this.feeder = feeder;
+        this.climber = false;
     }
 
     public void toggleClimber() {
@@ -14,11 +16,14 @@ public class Gearbox {
         feeder.runFeeder(0);
         spindexer.switchClimber();
         feeder.switchClimber();
+        climber = !climber;
     }
 
-    public void runClimber(double speed) {
-        spindexer.runClimber(speed);
-        feeder.runClimber(speed);
+    public void toggleClimberMove(double speed) {
+        if (climber) {
+            spindexer.toggleMotor(speed);
+            feeder.toggleMotor(-speed);
+        }
     }
 
 }

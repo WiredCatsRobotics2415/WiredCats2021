@@ -37,19 +37,17 @@ public class RobotMap {
 
     // Intake
     public static final int INTAKE_MOTOR = 18;
-    /*
     public static final int LEFT_INTAKE_EXTEND = 0;
     public static final int LEFT_INTAKE_RETRACT = 0;
     public static final int RIGHT_INTAKE_EXTEND = 0;
     public static final int RIGHT_INTAKE_RETRACT = 0;
-    */
 
     public static final int LEFT_TURRET_MOTOR = 38;
     public static final int RIGHT_TURRET_MOTOR = 39;
     public static final int TURN_TURRET_MOTOR = 37;
     public static final int HOOD_TURRET_MOTOR = 19;
-    public static final int TURN_TURRET_ENCODER = 0;
-    public static final int HOOD_TURRET_ENCODER = 0;
+    public static final int TURN_TURRET_ENCODER = 5;
+    public static final int HOOD_TURRET_ENCODER = 4;
     public static final boolean TURN_TURRET_ENCODER_REV = false;
     public static final boolean HOOD_TURRET_ENCODER_REV = false;
 

@@ -39,14 +39,14 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-        intake = new Intake();
+        //swerveDrive = new SwerveDrive(Constants.SWERVE_TUNING, Constants.SWERVE_LOGGING);
+        //intake = new Intake();
         spindexer = new Spindexer();
         feeder = new Feeder();
         gearbox = new Gearbox(spindexer, feeder);
         turret = new Turret();
-        //pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
+        pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
         //compressor = new Compressor(RobotMap.PCM_ID);
-        swerveDrive = new SwerveDrive(Constants.SWERVE_TUNING, Constants.SWERVE_LOGGING);
         oi = new OI();
     }
 
@@ -105,14 +105,18 @@ public class Robot extends TimedRobot {
                 System.out.println("zero Encoders");
                 swerveDrive.zeroEncoders();
             }
-            if (oi.getFeederToggle()) {
-                feeder.runFeeder(0.25);
-            }
-            if (oi.getSpindexerToggle()) {
-                spindexer.runSpindexer(0.25);
+            if (oi.getClimberToggle()) {
+                gearbox.toggleClimber();
             }
             if (oi.getIntakeToggle()) {
-                intake.startMotor();
+                intake.toggleExtend();
+                intake.toggleMotor();
+                spindexer.toggleMotor(0.25);
+            }
+            if (oi.getClimberDown()) {
+                gearbox.toggleClimberMove(-0.5);
+            } else if (oi.getClimberUp()) {
+                gearbox.toggleClimberMove(0.5);
             }
         } else {
             if (oi.getRawButtonPressed(1)) {
@@ -126,6 +130,9 @@ public class Robot extends TimedRobot {
             }
             if (oi.getRawButtonPressed(4)) {
                 swerveDrive.printModuleEncoders(Constants.SwerveModuleName.BACK_RIGHT);
+            }
+            if (oi.getRawButtonPressed(9)) {
+                turret.printEncoderValues();
             }
         }
     }

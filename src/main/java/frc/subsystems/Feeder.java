@@ -15,6 +15,7 @@ public class Feeder {
     private TalonFX motor;
     private Solenoid solenoid; 
     private boolean climber;
+    boolean running;
 
     public Feeder() {
         this.motor = new TalonFX(RobotMap.LEFT_GEARBOX_MOTOR);
@@ -36,15 +37,31 @@ public class Feeder {
 
     public void switchClimber() {
         this.climber = !climber;
+        this.motor.set(ControlMode.PercentOutput, 0);
         this.solenoid.set(climber);
+        running = false;
     }
 
     public void runFeeder(double speed) {
-        if (!climber) this.motor.set(ControlMode.PercentOutput, speed);
+        if (!climber) {
+            this.motor.set(ControlMode.PercentOutput, speed);
+        }
     }
 
     public void runClimber(double speed) {
-        if (climber) this.motor.set(ControlMode.PercentOutput, speed);
+        if (!climber) {
+            this.motor.set(ControlMode.PercentOutput, speed);
+        }
+    }
+
+    public void toggleMotor(double speed) {
+        if (running) {
+            this.motor.set(ControlMode.PercentOutput, 0);
+            running = false;
+        } else {
+            this.motor.set(ControlMode.PercentOutput, speed);
+            running = true;
+        }
     }
     
     public boolean getClimber() {
