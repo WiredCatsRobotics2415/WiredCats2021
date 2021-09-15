@@ -41,7 +41,7 @@ public class Turret {
         this.turretMotor = new TalonFX(RobotMap.TURN_TURRET_MOTOR);
 
         
-        //this.turnEncoder = new PWMAbsoluteEncoder(RobotMap.TURN_TURRET_ENCODER, Constants.TURN_TURRET_ENCODER_OFFSET, RobotMap.TURN_TURRET_ENCODER_REV);
+        this.turnEncoder = new PWMAbsoluteEncoder(RobotMap.TURN_TURRET_ENCODER, Constants.TURN_TURRET_ENCODER_OFFSET, RobotMap.TURN_TURRET_ENCODER_REV);
         // declare settings for motors
         this.leftShooterTalon.configFactoryDefault(Constants.kCanTimeoutMs);
         this.rightShooterTalon.configFactoryDefault(Constants.kCanTimeoutMs);
@@ -70,8 +70,8 @@ public class Turret {
         // set directions (because the motors on the shooter are opposite, one probably
         // needs to be inverted but check to be sure)
         // (don't drive both at the same time the 1st run)
-        this.leftShooterTalon.setInverted(false);
-        this.rightShooterTalon.setInverted(true);
+        this.leftShooterTalon.setInverted(true);
+        this.rightShooterTalon.setInverted(false);
         this.turretMotor.setInverted(false);
         // curent limits (you should play with the settings, I choose these kinda
         // random)
@@ -87,12 +87,12 @@ public class Turret {
         this.rightShooterTalon.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
         this.turretMotor.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
 
-        this.shooterController = new TalonFxTunable(this.rightShooterTalon, new PIDValue(20, 0, 0), ControlMode.Velocity);
+        this.shooterController = new TalonFxTunable(this.rightShooterTalon, new PIDValue(0, 0, 0), ControlMode.PercentOutput);
         this.leftShooterTalon.set(ControlMode.Follower, this.rightShooterTalon.getDeviceID());
         this.turretController = new TalonFxTunable(this.turretMotor, new PIDValue(0, 0, 0), ControlMode.Position);
-
+        
         this.shooterController.setSetpoint(0);
-        //this.turretController.setSetpoint(turnEncoder.getRotationDegrees()); // should be initial encoder value
+        this.turretController.setSetpoint(turnEncoder.getRotationDegrees()); // should be initial encoder value
 
         this.hoodMotor = new CANSparkMax(RobotMap.HOOD_TURRET_MOTOR, CANSparkMax.MotorType.kBrushless);
         this.hoodMotor.restoreFactoryDefaults();
@@ -120,14 +120,20 @@ public class Turret {
     }
 
     public void setShooterSpeed(double speed) {
+        System.out.println("Set to " + speed);
         shooterController.setSetpoint(speed);
+    }
+
+    public double getShooterSpeed() {
+        return rightShooterTalon.getSelectedSensorVelocity(0);
     }
 
     public void stopShooter() {
         shooterController.setSetpoint(0);
     }
 
-    public void setAngle(double degrees) {
+    //probably shouldn't reverse instead of 180, also hard limit on turning
+    public void setTurretAngle(double degrees) {
         if (Math.abs(degrees - this.prevTurnSetpoint) > 90 && Math.abs(degrees - this.prevTurnSetpoint) < 270) {
             degrees = (degrees + 180) % 360;
             turnReversed = true;
@@ -135,9 +141,15 @@ public class Turret {
             turnReversed = false;
         }
         if (degrees > this.prevTurnSetpoint && Math.abs(degrees - this.prevTurnSetpoint) > 180) {
-            turns--;
+            if (turns < -5) {
+                turns++;
+                System.out.println("ZERO SOON");
+            } else turns--;
         } else if (degrees < this.prevTurnSetpoint && Math.abs(degrees - this.prevTurnSetpoint) > 180) {
-            turns++;
+            if (turns > 5) {
+                turns--;
+                System.out.println("ZERO SOON");
+            } else turns++;
         }
         this.turretController.setSetpoint(degrees + turns * 360.0);
         this.prevTurnSetpoint = degrees;
@@ -150,26 +162,35 @@ public class Turret {
 
     public void zeroTurret() {
         this.turretMotor.set(ControlMode.PercentOutput, 0);
-        ErrorCode error = this.turretMotor.setSelectedSensorPosition(this.turnEncoder.getRotationDegrees(), 0, Constants.kCanTimeoutMs);
+        ErrorCode error = this.turretMotor.setSelectedSensorPosition(this.turnEncoder.getRotationDegrees() + (-turns * 360.0), 0, Constants.kCanTimeoutMs);
         if (!error.equals(ErrorCode.OK)) {
             System.out.println("failed zero");
-            error = this.turretMotor.setSelectedSensorPosition(this.turnEncoder.getRotationDegrees(), 0,
+            error = this.turretMotor.setSelectedSensorPosition(this.turnEncoder.getRotationDegrees() + (-turns * 360.0), 0,
                     Constants.kCanTimeoutMs);
         }
+        turns = 0;
         if(!Constants.ZEROING) { //might want to have separate zeroing constant for turret
             this.turretController.setSetpoint(this.turnEncoder.getRotationDegrees());
         }
     }
 
+    public double getTurretAngle() {
+        return this.turretController.getSetpoint(); 
+    }
+
     public void setHoodAngle(double angle) {
-        this.hoodMotor.set(angle);
+        this.hoodMotor.getPIDController().setReference(angle, ControlType.kPosition);
+    }
+    
+    public double getHoodAngle() {
+        return this.hoodMotor.getEncoder().getPosition();
     }
 
     public void zeroHood() {
         this.hoodMotor.stopMotor();
         this.hoodMotor.getEncoder().setPosition(this.hoodEncoder.getRotationDegrees());
         if (!Constants.ZEROING) {
-            this.hoodMotor.set(this.hoodEncoder.getRotationDegrees());
+            this.hoodMotor.getPIDController().setReference(this.hoodEncoder.getRotationDegrees(), ControlType.kPosition);
         }
     }
 

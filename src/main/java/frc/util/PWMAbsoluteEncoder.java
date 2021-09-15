@@ -16,6 +16,7 @@ public class PWMAbsoluteEncoder {
     private boolean testing;
 
     public PWMAbsoluteEncoder(int channel) {
+        System.out.println(channel);
         this.encoderInput = new DigitalInput(channel);
 
         this.encoderRawInputUp = new Counter(Mode.kSemiperiod); // right mode for this application
@@ -39,6 +40,7 @@ public class PWMAbsoluteEncoder {
 
     public PWMAbsoluteEncoder(boolean testing, int channel) {
         if(!testing) {
+        System.out.println(channel);
             this.encoderInput = new DigitalInput(channel);
 
             this.encoderRawInputUp = new Counter(Mode.kSemiperiod); // right mode for this application

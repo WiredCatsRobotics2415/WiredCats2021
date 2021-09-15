@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.subsystems.Gearbox;
 import frc.subsystems.Intake;
 import frc.subsystems.SwerveDrive;
@@ -32,6 +33,9 @@ public class Robot extends TimedRobot {
     private static SwerveDrive swerveDrive;
     private static OI oi;
     public static final String saveName = "WiredCats2021";
+    private double shooterVelocity;
+    private double hoodAngle;
+    private double turretAngle;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -48,6 +52,12 @@ public class Robot extends TimedRobot {
         pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
         //compressor = new Compressor(RobotMap.PCM_ID);
         oi = new OI();
+        this.shooterVelocity = 0;
+        SmartDashboard.putNumber("Shooter Velocity", this.shooterVelocity);
+        this.hoodAngle = turret.getHoodAngle();
+        SmartDashboard.putNumber("Hood Angle", this.hoodAngle);
+        this.turretAngle = turret.getTurretAngle();
+        SmartDashboard.putNumber("Turret Angle", this.turretAngle);
     }
 
     /**
@@ -100,18 +110,20 @@ public class Robot extends TimedRobot {
                 System.out.println("Left turning: " + swerveDrive.toggleLeftTurning());
             }
             */
-            swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
+            //swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
             if (oi.getRawButtonPressed(14)) {
                 System.out.println("zero Encoders");
-                swerveDrive.zeroEncoders();
+                //swerveDrive.zeroEncoders();
+                turret.zeroTurret();
+                turret.zeroHood();
             }
-            if (oi.getClimberToggle()) {
-                gearbox.toggleClimber();
-            }
-            if (oi.getIntakeToggle()) {
+            if (oi.getIntakeToggle() && !gearbox.getClimber()) {
                 intake.toggleExtend();
                 intake.toggleMotor();
                 spindexer.toggleMotor(0.25);
+            }
+            if (oi.getClimberToggle()) {
+                gearbox.toggleClimber();
             }
             if (oi.getClimberDown()) {
                 gearbox.toggleClimberMove(-0.5);
@@ -135,6 +147,24 @@ public class Robot extends TimedRobot {
                 turret.printEncoderValues();
             }
         }
+        double newVelocity = SmartDashboard.getNumber("Shooter Velocity", shooterVelocity);
+        if (newVelocity != shooterVelocity) {
+            shooterVelocity = newVelocity;
+            turret.setShooterSpeed(shooterVelocity);
+        }
+        SmartDashboard.putNumber("Shooter Velocity Actual", turret.getShooterSpeed());
+        double newHoodAngle = SmartDashboard.getNumber("Hood Angle", hoodAngle);
+        if (newHoodAngle != hoodAngle) {
+            hoodAngle = newHoodAngle;
+            turret.setHoodAngle(hoodAngle);
+        }
+        SmartDashboard.putNumber("Hood Angle Actual", turret.getHoodAngle());
+        double newTurretAngle = SmartDashboard.getNumber("Turret Angle", turretAngle);
+        if (newTurretAngle != turretAngle) {
+            turretAngle = newTurretAngle;
+            turret.setTurretAngle(turretAngle);
+        }
+        SmartDashboard.putNumber("Turret Angle Actual", turret.getTurretAngle());
     }
 
     /** This function is called once when the robot is disabled. */

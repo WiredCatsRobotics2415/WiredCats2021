@@ -26,4 +26,8 @@ public class Gearbox {
         }
     }
 
+    public boolean getClimber() {
+        return this.climber;
+    }
+
 }
