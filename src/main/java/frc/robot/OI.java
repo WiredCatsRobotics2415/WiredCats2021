@@ -35,7 +35,7 @@ public class OI {
     }
 
 
-    public boolean getSpindexerToggle() {
+    public boolean getFeederToggle() {
         return this.controller.getRawButtonPressed(1); // square button
     }
 

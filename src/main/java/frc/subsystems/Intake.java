@@ -12,8 +12,8 @@ public class Intake {
     CANSparkMax motor; 
 
     public Intake() {
-        leftSolenoid = new DoubleSolenoid(RobotMap.LEFT_INTAKE_EXTEND, RobotMap.LEFT_INTAKE_RETRACT);
-        rightSolenoid = new DoubleSolenoid(RobotMap.RIGHT_INTAKE_EXTEND, RobotMap.RIGHT_INTAKE_RETRACT);
+        //leftSolenoid = new DoubleSolenoid(RobotMap.LEFT_INTAKE_EXTEND, RobotMap.LEFT_INTAKE_RETRACT);
+        //rightSolenoid = new DoubleSolenoid(RobotMap.RIGHT_INTAKE_EXTEND, RobotMap.RIGHT_INTAKE_RETRACT);
         motor = new CANSparkMax(RobotMap.INTAKE_MOTOR, CANSparkMax.MotorType.kBrushless);
         stopMotor();
         retract();

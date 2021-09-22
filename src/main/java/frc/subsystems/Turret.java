@@ -34,6 +34,8 @@ public class Turret {
     private double prevTurnSetpoint;
     private int turns;
 
+    private double hoodSetpoint;
+
     public Turret() {
         // create motors
         this.leftShooterTalon = new TalonFX(RobotMap.LEFT_TURRET_MOTOR);
@@ -61,7 +63,7 @@ public class Turret {
         this.turretMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
                 Constants.kCanTimeoutMs);
         // set ratio of turret motor turns to turret turns
-        this.turretMotor.configSelectedFeedbackCoefficient(1/*ratio*/, 0,
+        this.turretMotor.configSelectedFeedbackCoefficient(360.0/(2048.0*1.0/90.0), 0,
                 Constants.kCanTimeoutMs);
         // set brake modes
         this.leftShooterTalon.setNeutralMode(NeutralMode.Coast);
@@ -100,6 +102,7 @@ public class Turret {
 
         this.hoodEncoder = new PWMAbsoluteEncoder(RobotMap.HOOD_TURRET_ENCODER, Constants.HOOD_TURRET_ENCODER_OFFSET, RobotMap.HOOD_TURRET_ENCODER_REV);
 
+        this.hoodMotor.setInverted(true);
         this.hoodMotor.getEncoder().setPositionConversionFactor(3000);
         this.hoodMotor.getEncoder().setPosition(hoodEncoder.getRotationDegrees());
 
@@ -132,27 +135,15 @@ public class Turret {
         shooterController.setSetpoint(0);
     }
 
-    //probably shouldn't reverse instead of 180, also hard limit on turning
+    public CANPIDController getHoodPID() {
+        return hoodMotor.getPIDController();
+    }
+
     public void setTurretAngle(double degrees) {
-        if (Math.abs(degrees - this.prevTurnSetpoint) > 90 && Math.abs(degrees - this.prevTurnSetpoint) < 270) {
-            degrees = (degrees + 180) % 360;
-            turnReversed = true;
-        } else {
-            turnReversed = false;
+        if (degrees <= 180 || degrees >= -180) {
+            this.turretController.setSetpoint(degrees);
+            this.turretController.run();
         }
-        if (degrees > this.prevTurnSetpoint && Math.abs(degrees - this.prevTurnSetpoint) > 180) {
-            if (turns < -5) {
-                turns++;
-                System.out.println("ZERO SOON");
-            } else turns--;
-        } else if (degrees < this.prevTurnSetpoint && Math.abs(degrees - this.prevTurnSetpoint) > 180) {
-            if (turns > 5) {
-                turns--;
-                System.out.println("ZERO SOON");
-            } else turns++;
-        }
-        this.turretController.setSetpoint(degrees + turns * 360.0);
-        this.prevTurnSetpoint = degrees;
     }
 
     public void run() {
@@ -162,13 +153,12 @@ public class Turret {
 
     public void zeroTurret() {
         this.turretMotor.set(ControlMode.PercentOutput, 0);
-        ErrorCode error = this.turretMotor.setSelectedSensorPosition(this.turnEncoder.getRotationDegrees() + (-turns * 360.0), 0, Constants.kCanTimeoutMs);
+        ErrorCode error = this.turretMotor.setSelectedSensorPosition(this.turnEncoder.getRotationDegrees(), 0, Constants.kCanTimeoutMs);
         if (!error.equals(ErrorCode.OK)) {
             System.out.println("failed zero");
-            error = this.turretMotor.setSelectedSensorPosition(this.turnEncoder.getRotationDegrees() + (-turns * 360.0), 0,
+            error = this.turretMotor.setSelectedSensorPosition(this.turnEncoder.getRotationDegrees(), 0,
                     Constants.kCanTimeoutMs);
         }
-        turns = 0;
         if(!Constants.ZEROING) { //might want to have separate zeroing constant for turret
             this.turretController.setSetpoint(this.turnEncoder.getRotationDegrees());
         }
@@ -179,11 +169,20 @@ public class Turret {
     }
 
     public void setHoodAngle(double angle) {
+        hoodSetpoint = angle;
         this.hoodMotor.getPIDController().setReference(angle, ControlType.kPosition);
+    }
+
+    public void stopHood() {
+        this.hoodMotor.stopMotor();
     }
     
     public double getHoodAngle() {
         return this.hoodMotor.getEncoder().getPosition();
+    }
+
+    public double getHoodSetpoint() {
+        return this.hoodSetpoint;
     }
 
     public void zeroHood() {

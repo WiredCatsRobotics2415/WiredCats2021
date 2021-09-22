@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
     private double shooterVelocity;
     private double hoodAngle;
     private double turretAngle;
+    private double hoodP, hoodD;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -58,6 +59,10 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Hood Angle", this.hoodAngle);
         this.turretAngle = turret.getTurretAngle();
         SmartDashboard.putNumber("Turret Angle", this.turretAngle);
+        this.hoodP = turret.getHoodPID().getP();
+        SmartDashboard.putNumber("Hood P Value", this.hoodP);
+        this.hoodD = turret.getHoodPID().getD();
+        SmartDashboard.putNumber("Hood D Value", this.hoodD);
     }
 
     /**
@@ -120,15 +125,19 @@ public class Robot extends TimedRobot {
             if (oi.getIntakeToggle() && !gearbox.getClimber()) {
                 intake.toggleExtend();
                 intake.toggleMotor();
-                spindexer.toggleMotor(0.25);
             }
             if (oi.getClimberToggle()) {
                 gearbox.toggleClimber();
             }
+            if (oi.getFeederToggle()) {
+                feeder.toggleMotor(1.0);
+            }
             if (oi.getClimberDown()) {
-                gearbox.toggleClimberMove(-0.5);
+                if (gearbox.getClimber()) gearbox.toggleClimberMove(-0.5);
+                else spindexer.toggleMotor(-0.25);
             } else if (oi.getClimberUp()) {
-                gearbox.toggleClimberMove(0.5);
+                if (gearbox.getClimber()) gearbox.toggleClimberMove(0.5);
+                else spindexer.toggleMotor(0.25);
             }
         } else {
             if (oi.getRawButtonPressed(1)) {
@@ -147,6 +156,7 @@ public class Robot extends TimedRobot {
                 turret.printEncoderValues();
             }
         }
+        if (Math.abs(turret.getHoodSetpoint()-turret.getHoodAngle()) < Constants.DEADBAND) turret.stopHood(); 
         double newVelocity = SmartDashboard.getNumber("Shooter Velocity", shooterVelocity);
         if (newVelocity != shooterVelocity) {
             shooterVelocity = newVelocity;
@@ -165,6 +175,19 @@ public class Robot extends TimedRobot {
             turret.setTurretAngle(turretAngle);
         }
         SmartDashboard.putNumber("Turret Angle Actual", turret.getTurretAngle());
+        double newHoodP = SmartDashboard.getNumber("Hood P Value", hoodP);
+        if (newHoodP != hoodP) {
+            hoodP = newHoodP;
+            turret.getHoodPID().setP(hoodP);
+        }
+        SmartDashboard.putNumber("Hood P Actual", turret.getHoodPID().getP());
+        double newHoodD = SmartDashboard.getNumber("Hood D Value", hoodD);
+        if (newHoodD != hoodD) {
+            hoodD = newHoodD;
+            turret.getHoodPID().setD(hoodD);
+        }
+        SmartDashboard.putNumber("Hood D Actual", turret.getHoodPID().getD());
+        SmartDashboard.putNumber("Hood Position", turret.getHoodAngle()-hoodAngle);
     }
 
     /** This function is called once when the robot is disabled. */

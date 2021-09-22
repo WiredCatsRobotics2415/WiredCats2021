@@ -46,12 +46,14 @@ public class Spindexer {
     public void runSpindexer(double speed) {
         if (!climber) {
             this.motor.set(ControlMode.PercentOutput, speed);
+            if (speed > 0) running = true;
         }
     }
 
     public void runClimber(double speed) {
         if (!climber) {
             this.motor.set(ControlMode.PercentOutput, speed);
+            if (speed > 0) running = true;
         }
     }
 
@@ -65,6 +67,10 @@ public class Spindexer {
         }
     }
     
+    public boolean getRunning() {
+        return this.running;
+    }
+
     public boolean getClimber() {
         return this.climber;
     }

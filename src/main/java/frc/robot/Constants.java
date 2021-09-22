@@ -22,7 +22,7 @@ public class Constants {
     public static final PIDValue DRIVE_DISTANCE_PID = new PIDValue(8, 0.0, 0.0);
     public static final PIDValue TURNING_PID = new PIDValue(1.0,0.0,0.0);
 
-    public static final PIDValue HOOD_PID = new PIDValue(0.0, 0.0, 0.0);
+    public static final PIDValue HOOD_PID = new PIDValue(0.000007, 0.0, 0.0001);
 
     public static final double KS = 0.164, KV = 0.97, KA = 0.1;// 1.0;
 
