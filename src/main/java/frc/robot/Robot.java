@@ -36,7 +36,6 @@ public class Robot extends TimedRobot {
     private double shooterVelocity;
     private double hoodAngle;
     private double turretAngle;
-    private double hoodP, hoodD;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -59,10 +58,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Hood Angle", this.hoodAngle);
         this.turretAngle = turret.getTurretAngle();
         SmartDashboard.putNumber("Turret Angle", this.turretAngle);
-        this.hoodP = turret.getHoodPID().getP();
-        SmartDashboard.putNumber("Hood P Value", this.hoodP);
-        this.hoodD = turret.getHoodPID().getD();
-        SmartDashboard.putNumber("Hood D Value", this.hoodD);
     }
 
     /**
@@ -175,19 +170,6 @@ public class Robot extends TimedRobot {
             turret.setTurretAngle(turretAngle);
         }
         SmartDashboard.putNumber("Turret Angle Actual", turret.getTurretAngle());
-        double newHoodP = SmartDashboard.getNumber("Hood P Value", hoodP);
-        if (newHoodP != hoodP) {
-            hoodP = newHoodP;
-            turret.getHoodPID().setP(hoodP);
-        }
-        SmartDashboard.putNumber("Hood P Actual", turret.getHoodPID().getP());
-        double newHoodD = SmartDashboard.getNumber("Hood D Value", hoodD);
-        if (newHoodD != hoodD) {
-            hoodD = newHoodD;
-            turret.getHoodPID().setD(hoodD);
-        }
-        SmartDashboard.putNumber("Hood D Actual", turret.getHoodPID().getD());
-        SmartDashboard.putNumber("Hood Position", turret.getHoodAngle()-hoodAngle);
     }
 
     /** This function is called once when the robot is disabled. */

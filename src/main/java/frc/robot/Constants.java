@@ -23,6 +23,8 @@ public class Constants {
     public static final PIDValue TURNING_PID = new PIDValue(1.0,0.0,0.0);
 
     public static final PIDValue HOOD_PID = new PIDValue(0.000007, 0.0, 0.0001);
+    public static final PIDFValue SHOOTER_PIDF = new PIDFValue(1.1, 0.0, 0.3, 0.07);
+    public static final PIDValue TURRET_PID = new PIDValue(0.0, 0.0, 0.0);
 
     public static final double KS = 0.164, KV = 0.97, KA = 0.1;// 1.0;
 

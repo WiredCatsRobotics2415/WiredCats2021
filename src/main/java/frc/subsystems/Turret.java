@@ -15,7 +15,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.util.PWMAbsoluteEncoder;
-import frc.util.pid.PIDValue;
 import frc.util.pid.TalonFxTunable;
 
 public class Turret {
@@ -89,10 +88,10 @@ public class Turret {
         this.rightShooterTalon.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
         this.turretMotor.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
 
-        this.shooterController = new TalonFxTunable(this.rightShooterTalon, new PIDValue(0, 0, 0), ControlMode.PercentOutput);
+        this.shooterController = new TalonFxTunable(this.rightShooterTalon, Constants.SHOOTER_PIDF, ControlMode.Velocity);
         this.leftShooterTalon.set(ControlMode.Follower, this.rightShooterTalon.getDeviceID());
-        this.turretController = new TalonFxTunable(this.turretMotor, new PIDValue(0, 0, 0), ControlMode.Position);
-        
+        this.turretController = new TalonFxTunable(this.turretMotor, Constants.TURRET_PID, ControlMode.Position);
+
         this.shooterController.setSetpoint(0);
         this.turretController.setSetpoint(turnEncoder.getRotationDegrees()); // should be initial encoder value
 

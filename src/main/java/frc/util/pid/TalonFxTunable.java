@@ -7,7 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import frc.robot.Constants;
 
 public class TalonFxTunable implements PIDTunable {
-    private final PIDValue pidValue;
+    private final PIDFValue pidValue;
     private final TalonFX talon;
     private PIDTuner tuner;
 
@@ -19,13 +19,24 @@ public class TalonFxTunable implements PIDTunable {
 
     public TalonFxTunable(TalonFX talon, double kP, double kI, double kD, ControlMode controlMode) {
         // must pre config talon with PID 
-        this(talon, new PIDValue(kP, kI, kD), controlMode);
+        this(talon, new PIDFValue(kP, kI, kD, 0), controlMode);
     }
 
     public TalonFxTunable(TalonFX talon, PIDValue pidValue, ControlMode controlMode) {
         this.talon = talon;
-        this.pidValue = pidValue;
+        this.pidValue = new PIDFValue(pidValue);
         this.setPID(pidValue.getKP(), pidValue.getKI(), pidValue.getKD());
+        this.setpoint = 0;
+        this.tuner = null;
+        this.tuning = false;
+        this.controlMode = controlMode;
+        this.testing = false;
+    }
+
+    public TalonFxTunable(TalonFX talon, PIDFValue pidValue, ControlMode controlMode) {
+        this.talon = talon;
+        this.pidValue = pidValue;
+        this.setPID(pidValue.getKP(), pidValue.getKI(), pidValue.getKD(), pidValue.getKF());
         this.setpoint = 0;
         this.tuner = null;
         this.tuning = false;
@@ -43,7 +54,7 @@ public class TalonFxTunable implements PIDTunable {
 
     public TalonFxTunable(boolean testing, TalonFX talon, PIDValue pidValue, ControlMode controlMode) {
         this.talon = talon;
-        this.pidValue = pidValue;
+        this.pidValue = new PIDFValue(pidValue);
         this.controlMode = controlMode;
         this.tuner = null;
         this.tuning = false;
@@ -57,6 +68,15 @@ public class TalonFxTunable implements PIDTunable {
             this.talon.config_kP(0, pidValue.getKP(), Constants.kCanTimeoutMs);
             this.talon.config_kI(0, pidValue.getKI(), Constants.kCanTimeoutMs);
             this.talon.config_kD(0, pidValue.getKD(), Constants.kCanTimeoutMs);
+        }
+    }
+
+    public void setPID(double kP, double kI, double kD, double kF) {
+        if(!testing) {
+            this.talon.config_kP(0, pidValue.getKP(), Constants.kCanTimeoutMs);
+            this.talon.config_kI(0, pidValue.getKI(), Constants.kCanTimeoutMs);
+            this.talon.config_kD(0, pidValue.getKD(), Constants.kCanTimeoutMs);
+            this.talon.config_kF(0, pidValue.getKF(), Constants.kCanTimeoutMs);
         }
     }
 
@@ -75,6 +95,10 @@ public class TalonFxTunable implements PIDTunable {
 
     public double getKD() {
         return this.pidValue.getKD();
+    }
+
+    public double getKF() {
+        return this.pidValue.getKF();
     }
 
     public double getError() {
