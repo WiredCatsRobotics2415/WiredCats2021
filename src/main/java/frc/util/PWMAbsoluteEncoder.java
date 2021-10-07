@@ -78,6 +78,7 @@ public class PWMAbsoluteEncoder {
             timeOn = 0;
             timeOff = 1024;
         }
+        //could potentially set timeOn + timeOff to 1026 - test this
         double x = ((timeOn * 1026) / (timeOn + timeOff)) - 1;
         double returnValue = 0;
         if (x <= 1023)

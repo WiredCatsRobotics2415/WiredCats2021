@@ -29,11 +29,11 @@ public class Turret {
     private CANSparkMax hoodMotor;
     private PWMAbsoluteEncoder hoodEncoder;
 
-    private boolean turnReversed;
-    private double prevTurnSetpoint;
-    private int turns;
-
     private double hoodSetpoint;
+    private boolean hoodStuck;
+    private final double STUCK_POINT = 0.0;
+
+
 
     public Turret() {
         // create motors
@@ -104,6 +104,7 @@ public class Turret {
         this.hoodMotor.setInverted(true);
         this.hoodMotor.getEncoder().setPositionConversionFactor(3000);
         this.hoodMotor.getEncoder().setPosition(hoodEncoder.getRotationDegrees());
+        if (this.hoodEncoder.getRotationDegrees() < STUCK_POINT) hoodStuck = true;
 
         CANPIDController hoodPID = this.hoodMotor.getPIDController();
         hoodPID.setP(Constants.HOOD_PID.getKP());
@@ -111,14 +112,6 @@ public class Turret {
         hoodPID.setD(Constants.HOOD_PID.getKD());
         hoodPID.setReference(hoodEncoder.getRotationDegrees(), ControlType.kPosition);
 
-        turnReversed = false;
-        prevTurnSetpoint = this.turretController.getSetpoint();
-        turns = 0;
-    }
-
-    public Turret(boolean reversed) {
-        this();
-        turnReversed = reversed;
     }
 
     public void setShooterSpeed(double speed) {
@@ -168,8 +161,17 @@ public class Turret {
     }
 
     public void setHoodAngle(double angle) {
-        hoodSetpoint = angle;
-        this.hoodMotor.getPIDController().setReference(angle, ControlType.kPosition);
+        if (angle > STUCK_POINT && hoodStuck) {
+            while (this.hoodEncoder.getRotationDegrees() < STUCK_POINT) this.hoodMotor.set(1);
+            this.hoodMotor.set(0);
+            this.hoodMotor.getEncoder().setPosition(hoodEncoder.getRotationDegrees());
+            hoodStuck = false;
+        }
+        if (!hoodStuck) {
+            hoodSetpoint = angle;
+            this.hoodMotor.getPIDController().setReference(angle, ControlType.kPosition);
+            if (angle < STUCK_POINT) hoodStuck = true;
+        }
     }
 
     public void stopHood() {
@@ -182,6 +184,11 @@ public class Turret {
 
     public double getHoodSetpoint() {
         return this.hoodSetpoint;
+    }
+
+
+    public TalonFX getShooter() {
+        return this.rightShooterTalon;
     }
 
     public void zeroHood() {

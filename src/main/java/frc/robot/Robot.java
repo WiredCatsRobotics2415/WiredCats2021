@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
     private double shooterVelocity;
     private double hoodAngle;
     private double turretAngle;
+    private double turretP, turretD, turretF;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -43,7 +44,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-        //swerveDrive = new SwerveDrive(Constants.SWERVE_TUNING, Constants.SWERVE_LOGGING);
+        swerveDrive = new SwerveDrive(Constants.SWERVE_TUNING, Constants.SWERVE_LOGGING);
         //intake = new Intake();
         spindexer = new Spindexer();
         feeder = new Feeder();
@@ -58,6 +59,12 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Hood Angle", this.hoodAngle);
         this.turretAngle = turret.getTurretAngle();
         SmartDashboard.putNumber("Turret Angle", this.turretAngle);
+        this.turretP = 0;
+        this.turretD = 0;
+        this.turretF = 0;
+        SmartDashboard.putNumber("Turret P", this.turretP);
+        SmartDashboard.putNumber("Turret D", this.turretD);
+        SmartDashboard.putNumber("Turret F", this.turretF);
     }
 
     /**
@@ -110,12 +117,12 @@ public class Robot extends TimedRobot {
                 System.out.println("Left turning: " + swerveDrive.toggleLeftTurning());
             }
             */
-            //swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
+            swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
             if (oi.getRawButtonPressed(14)) {
                 System.out.println("zero Encoders");
-                //swerveDrive.zeroEncoders();
-                turret.zeroTurret();
-                turret.zeroHood();
+                swerveDrive.zeroEncoders();
+                //turret.zeroTurret();
+                //turret.zeroHood();
             }
             if (oi.getIntakeToggle() && !gearbox.getClimber()) {
                 intake.toggleExtend();
@@ -158,6 +165,7 @@ public class Robot extends TimedRobot {
             turret.setShooterSpeed(shooterVelocity);
         }
         SmartDashboard.putNumber("Shooter Velocity Actual", turret.getShooterSpeed());
+        SmartDashboard.putNumber("Shooter Velocity Diff", turret.getShooterSpeed()-shooterVelocity);
         double newHoodAngle = SmartDashboard.getNumber("Hood Angle", hoodAngle);
         if (newHoodAngle != hoodAngle) {
             hoodAngle = newHoodAngle;
@@ -169,6 +177,23 @@ public class Robot extends TimedRobot {
             turretAngle = newTurretAngle;
             turret.setTurretAngle(turretAngle);
         }
+        /*
+        double newP = SmartDashboard.getNumber("Turret P", turretP); 
+        if (newP != turretP) {
+            turretP = newP;
+            turret.getShooter().config_kP(0, turretP);
+        }
+        double newD = SmartDashboard.getNumber("Turret D", turretD); 
+        if (newD != turretD) {
+            turretD = newD;
+            turret.getShooter().config_kD(0, turretD);
+        }
+        double newF = SmartDashboard.getNumber("Turret F", turretF); 
+        if (newF != turretF) {
+            turretF = newF;
+            turret.getShooter().config_kF(0, turretF);
+        }
+        */
         SmartDashboard.putNumber("Turret Angle Actual", turret.getTurretAngle());
     }
 
