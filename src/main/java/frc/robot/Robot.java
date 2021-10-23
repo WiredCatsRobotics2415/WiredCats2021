@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -37,6 +40,9 @@ public class Robot extends TimedRobot {
     private double hoodAngle;
     private double turretAngle;
     private double turretP, turretD, turretF;
+    private NetworkTable table;
+    private NetworkTableEntry tx, ty, ta;
+
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -55,8 +61,6 @@ public class Robot extends TimedRobot {
         oi = new OI();
         this.shooterVelocity = 0;
         SmartDashboard.putNumber("Shooter Velocity", this.shooterVelocity);
-        this.hoodAngle = turret.getHoodAngle();
-        SmartDashboard.putNumber("Hood Angle", this.hoodAngle);
         this.turretAngle = turret.getTurretAngle();
         SmartDashboard.putNumber("Turret Angle", this.turretAngle);
         this.turretP = 0;
@@ -65,6 +69,10 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Turret P", this.turretP);
         SmartDashboard.putNumber("Turret D", this.turretD);
         SmartDashboard.putNumber("Turret F", this.turretF);
+        table = NetworkTableInstance.getDefault().getTable("limelight");
+        tx = table.getEntry("tx");
+        ty = table.getEntry("ty");
+        ta = table.getEntry("ta");
     }
 
     /**
@@ -109,6 +117,18 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
+        
+        //read values periodically
+        double x = tx.getDouble(0.0);
+        double y = ty.getDouble(0.0);
+        double area = ta.getDouble(0.0);
+        double distance = (49.5/Math.tan(27.0+y));
+
+        //post to smart dashboard periodically
+        SmartDashboard.putNumber("LimelightX", x);
+        SmartDashboard.putNumber("LimelightY", y);
+        SmartDashboard.putNumber("Distance", distance);
+        SmartDashboard.putNumber("LimelightArea", area);
         if (!Constants.ZEROING) {
             /*
             if (oi.getRightTurningToggle()) {
@@ -122,7 +142,6 @@ public class Robot extends TimedRobot {
                 System.out.println("zero Encoders");
                 swerveDrive.zeroEncoders();
                 //turret.zeroTurret();
-                //turret.zeroHood();
             }
             if (oi.getIntakeToggle() && !gearbox.getClimber()) {
                 intake.toggleExtend();
@@ -131,8 +150,8 @@ public class Robot extends TimedRobot {
             if (oi.getClimberToggle()) {
                 gearbox.toggleClimber();
             }
-            if (oi.getFeederToggle()) {
-                feeder.toggleMotor(1.0);
+            if (oi.getAutoAimToggle()) {
+                turret.setTurretAngle(turret.getTurretAngle()+x);
             }
             if (oi.getClimberDown()) {
                 if (gearbox.getClimber()) gearbox.toggleClimberMove(-0.5);
@@ -154,24 +173,14 @@ public class Robot extends TimedRobot {
             if (oi.getRawButtonPressed(4)) {
                 swerveDrive.printModuleEncoders(Constants.SwerveModuleName.BACK_RIGHT);
             }
-            if (oi.getRawButtonPressed(9)) {
-                turret.printEncoderValues();
-            }
         }
-        if (Math.abs(turret.getHoodSetpoint()-turret.getHoodAngle()) < Constants.DEADBAND) turret.stopHood(); 
         double newVelocity = SmartDashboard.getNumber("Shooter Velocity", shooterVelocity);
         if (newVelocity != shooterVelocity) {
             shooterVelocity = newVelocity;
             turret.setShooterSpeed(shooterVelocity);
         }
-        SmartDashboard.putNumber("Shooter Velocity Actual", turret.getShooterSpeed());
+        SmartDashboard.putNumber("Shooter Velocity Actual", turret.getTurretAngle());
         SmartDashboard.putNumber("Shooter Velocity Diff", turret.getShooterSpeed()-shooterVelocity);
-        double newHoodAngle = SmartDashboard.getNumber("Hood Angle", hoodAngle);
-        if (newHoodAngle != hoodAngle) {
-            hoodAngle = newHoodAngle;
-            turret.setHoodAngle(hoodAngle);
-        }
-        SmartDashboard.putNumber("Hood Angle Actual", turret.getHoodAngle());
         double newTurretAngle = SmartDashboard.getNumber("Turret Angle", turretAngle);
         if (newTurretAngle != turretAngle) {
             turretAngle = newTurretAngle;

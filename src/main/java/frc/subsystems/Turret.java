@@ -24,16 +24,6 @@ public class Turret {
     private TalonFX turretMotor;
     private TalonFxTunable turretController;
 
-    private PWMAbsoluteEncoder turnEncoder;
-
-    private CANSparkMax hoodMotor;
-    private PWMAbsoluteEncoder hoodEncoder;
-
-    private double hoodSetpoint;
-    private boolean hoodStuck;
-    private final double STUCK_POINT = 0.0;
-
-
 
     public Turret() {
         // create motors
@@ -41,8 +31,6 @@ public class Turret {
         this.rightShooterTalon = new TalonFX(RobotMap.RIGHT_TURRET_MOTOR);
         this.turretMotor = new TalonFX(RobotMap.TURN_TURRET_MOTOR);
 
-        
-        this.turnEncoder = new PWMAbsoluteEncoder(RobotMap.TURN_TURRET_ENCODER, Constants.TURN_TURRET_ENCODER_OFFSET, RobotMap.TURN_TURRET_ENCODER_REV);
         // declare settings for motors
         this.leftShooterTalon.configFactoryDefault(Constants.kCanTimeoutMs);
         this.rightShooterTalon.configFactoryDefault(Constants.kCanTimeoutMs);
@@ -62,7 +50,7 @@ public class Turret {
         this.turretMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
                 Constants.kCanTimeoutMs);
         // set ratio of turret motor turns to turret turns
-        this.turretMotor.configSelectedFeedbackCoefficient(360.0/(2048.0*1.0/90.0), 0,
+        this.turretMotor.configSelectedFeedbackCoefficient(360.0/(2048.0*90.0), 0,
                 Constants.kCanTimeoutMs);
         // set brake modes
         this.leftShooterTalon.setNeutralMode(NeutralMode.Coast);
@@ -93,25 +81,7 @@ public class Turret {
         this.turretController = new TalonFxTunable(this.turretMotor, Constants.TURRET_PID, ControlMode.Position);
 
         this.shooterController.setSetpoint(0);
-        this.turretController.setSetpoint(turnEncoder.getRotationDegrees()); // should be initial encoder value
-
-        this.hoodMotor = new CANSparkMax(RobotMap.HOOD_TURRET_MOTOR, CANSparkMax.MotorType.kBrushless);
-        this.hoodMotor.restoreFactoryDefaults();
-        this.hoodMotor.setIdleMode(IdleMode.kBrake);
-
-        this.hoodEncoder = new PWMAbsoluteEncoder(RobotMap.HOOD_TURRET_ENCODER, Constants.HOOD_TURRET_ENCODER_OFFSET, RobotMap.HOOD_TURRET_ENCODER_REV);
-
-        this.hoodMotor.setInverted(true);
-        this.hoodMotor.getEncoder().setPositionConversionFactor(3000);
-        this.hoodMotor.getEncoder().setPosition(hoodEncoder.getRotationDegrees());
-        if (this.hoodEncoder.getRotationDegrees() < STUCK_POINT) hoodStuck = true;
-
-        CANPIDController hoodPID = this.hoodMotor.getPIDController();
-        hoodPID.setP(Constants.HOOD_PID.getKP());
-        hoodPID.setI(Constants.HOOD_PID.getKI());
-        hoodPID.setD(Constants.HOOD_PID.getKD());
-        hoodPID.setReference(hoodEncoder.getRotationDegrees(), ControlType.kPosition);
-
+        this.turretController.setSetpoint(0); // should be initial encoder value
     }
 
     public void setShooterSpeed(double speed) {
@@ -125,10 +95,6 @@ public class Turret {
 
     public void stopShooter() {
         shooterController.setSetpoint(0);
-    }
-
-    public CANPIDController getHoodPID() {
-        return hoodMotor.getPIDController();
     }
 
     public void setTurretAngle(double degrees) {
@@ -145,14 +111,11 @@ public class Turret {
 
     public void zeroTurret() {
         this.turretMotor.set(ControlMode.PercentOutput, 0);
-        ErrorCode error = this.turretMotor.setSelectedSensorPosition(this.turnEncoder.getRotationDegrees(), 0, Constants.kCanTimeoutMs);
+        ErrorCode error = this.turretMotor.setSelectedSensorPosition(0, 0, Constants.kCanTimeoutMs);
         if (!error.equals(ErrorCode.OK)) {
             System.out.println("failed zero");
-            error = this.turretMotor.setSelectedSensorPosition(this.turnEncoder.getRotationDegrees(), 0,
+            error = this.turretMotor.setSelectedSensorPosition(0, 0,
                     Constants.kCanTimeoutMs);
-        }
-        if(!Constants.ZEROING) { //might want to have separate zeroing constant for turret
-            this.turretController.setSetpoint(this.turnEncoder.getRotationDegrees());
         }
     }
 
@@ -160,47 +123,8 @@ public class Turret {
         return this.turretController.getSetpoint(); 
     }
 
-    public void setHoodAngle(double angle) {
-        if (angle > STUCK_POINT && hoodStuck) {
-            while (this.hoodEncoder.getRotationDegrees() < STUCK_POINT) this.hoodMotor.set(1);
-            this.hoodMotor.set(0);
-            this.hoodMotor.getEncoder().setPosition(hoodEncoder.getRotationDegrees());
-            hoodStuck = false;
-        }
-        if (!hoodStuck) {
-            hoodSetpoint = angle;
-            this.hoodMotor.getPIDController().setReference(angle, ControlType.kPosition);
-            if (angle < STUCK_POINT) hoodStuck = true;
-        }
-    }
-
-    public void stopHood() {
-        this.hoodMotor.stopMotor();
-    }
-    
-    public double getHoodAngle() {
-        return this.hoodMotor.getEncoder().getPosition();
-    }
-
-    public double getHoodSetpoint() {
-        return this.hoodSetpoint;
-    }
-
-
     public TalonFX getShooter() {
-        return this.rightShooterTalon;
+        return this.turretMotor;
     }
 
-    public void zeroHood() {
-        this.hoodMotor.stopMotor();
-        this.hoodMotor.getEncoder().setPosition(this.hoodEncoder.getRotationDegrees());
-        if (!Constants.ZEROING) {
-            this.hoodMotor.getPIDController().setReference(this.hoodEncoder.getRotationDegrees(), ControlType.kPosition);
-        }
-    }
-
-    public void printEncoderValues() {
-        System.out.println("Turret turn: " + this.turnEncoder.getRotationDegrees());
-        System.out.println("Turret hood: " + this.hoodEncoder.getRotationDegrees());
-    }
 }

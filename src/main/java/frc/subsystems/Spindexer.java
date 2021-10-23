@@ -75,5 +75,7 @@ public class Spindexer {
         return this.climber;
     }
 
-
+    public double getCurrent() {
+        return this.motor.getSupplyCurrent();
+    }
 }

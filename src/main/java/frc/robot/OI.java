@@ -35,7 +35,7 @@ public class OI {
     }
 
 
-    public boolean getFeederToggle() {
+    public boolean getAutoAimToggle() {
         return this.controller.getRawButtonPressed(1); // square button
     }
 
@@ -57,10 +57,6 @@ public class OI {
 
     public boolean getIntakeExtensionToggle() {
         return this.controller.getRawButtonPressed(3); // circle button
-    }
-
-    public double getShooterSpeed() {
-        return this.controller.getRawAxis(4); // right trigger
     }
 
     /*
