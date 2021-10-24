@@ -50,12 +50,12 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        turret = new Turret();
         swerveDrive = new SwerveDrive(Constants.SWERVE_TUNING, Constants.SWERVE_LOGGING);
         //intake = new Intake();
         spindexer = new Spindexer();
         feeder = new Feeder();
         gearbox = new Gearbox(spindexer, feeder);
-        turret = new Turret();
         pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
         //compressor = new Compressor(RobotMap.PCM_ID);
         oi = new OI();
@@ -112,6 +112,11 @@ public class Robot extends TimedRobot {
     /** This function is called once when teleop is enabled. */
     @Override
     public void teleopInit() {
+        swerveDrive.stopEncoder();
+        turret.startEncoder();
+        turret.zeroTurret();
+        turret.stopEncoder();
+        swerveDrive.startEncoder();
     }
 
     /** This function is called periodically during operator control. */
@@ -130,18 +135,10 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Distance", distance);
         SmartDashboard.putNumber("LimelightArea", area);
         if (!Constants.ZEROING) {
-            /*
-            if (oi.getRightTurningToggle()) {
-                System.out.println("Right turning: " + swerveDrive.toggleRightTurning());
-            } else if (oi.getLeftTurningToggle()) {
-                System.out.println("Left turning: " + swerveDrive.toggleLeftTurning());
-            }
-            */
             swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
             if (oi.getRawButtonPressed(14)) {
                 System.out.println("zero Encoders");
                 swerveDrive.zeroEncoders();
-                //turret.zeroTurret();
             }
             if (oi.getIntakeToggle() && !gearbox.getClimber()) {
                 intake.toggleExtend();
@@ -159,6 +156,9 @@ public class Robot extends TimedRobot {
             } else if (oi.getClimberUp()) {
                 if (gearbox.getClimber()) gearbox.toggleClimberMove(0.5);
                 else spindexer.toggleMotor(0.25);
+            }
+            if (oi.getTurretToggle()) {
+                
             }
         } else {
             if (oi.getRawButtonPressed(1)) {

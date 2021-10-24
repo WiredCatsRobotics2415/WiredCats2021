@@ -15,6 +15,7 @@ public class Spindexer {
     private TalonFX motor;
     private Solenoid solenoid; 
     private boolean climber;
+    private double speed;
     boolean running;
 
     public Spindexer() {
@@ -47,11 +48,12 @@ public class Spindexer {
         if (!climber) {
             this.motor.set(ControlMode.PercentOutput, speed);
             if (speed > 0) running = true;
+            this.speed = speed;
         }
     }
 
     public void runClimber(double speed) {
-        if (!climber) {
+        if (climber) {
             this.motor.set(ControlMode.PercentOutput, speed);
             if (speed > 0) running = true;
         }
@@ -61,9 +63,11 @@ public class Spindexer {
         if (running) {
             this.motor.set(ControlMode.PercentOutput, 0);
             running = false;
+            this.speed = 0;
         } else {
             this.motor.set(ControlMode.PercentOutput, speed);
             running = true;
+            this.speed = speed;
         }
     }
     
@@ -77,5 +81,13 @@ public class Spindexer {
 
     public double getCurrent() {
         return this.motor.getSupplyCurrent();
+    }
+
+    public void checkCurrent() {
+        if (!climber) {
+            if (this.motor.getSupplyCurrent() > CURRENT_MAX) {
+                runSpindexer(this.speed * -1);
+            }
+        }
     }
 }

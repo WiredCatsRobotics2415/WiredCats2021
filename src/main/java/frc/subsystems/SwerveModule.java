@@ -354,4 +354,12 @@ public class SwerveModule {
     public double getAzimuthSetpoint() {
         return this.azimuthController.getSetpoint();
     }
+
+    public void stopEncoder() {
+        this.azimuthEncoder.closeEncoder();
+    }
+
+    public void startEncoder() {
+        this.azimuthEncoder.openEncoder();
+    }
 }

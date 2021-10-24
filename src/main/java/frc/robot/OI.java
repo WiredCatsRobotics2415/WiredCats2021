@@ -59,6 +59,10 @@ public class OI {
         return this.controller.getRawButtonPressed(3); // circle button
     }
 
+    public boolean getTurretToggle() {
+        return this.controller.getRawButtonPressed(0); //right joystick click
+    }
+
     /*
     public boolean getCompressorToggle() {
         return this.controller.getRawButtonPressed(4); // triangle button
@@ -75,5 +79,13 @@ public class OI {
 
     public boolean getRawButtonPressed(int button) {
         return this.controller.getRawButtonPressed(button);
+    }
+
+    public void updateShuffleboard() {
+        
+    }
+    
+    public double getTurretSpeed() {
+        return 0.00967848 * Math.pow((distance + 283.394), 2) + 6240.68;  
     }
 }

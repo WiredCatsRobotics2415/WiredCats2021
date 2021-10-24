@@ -5,18 +5,16 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Counter.Mode;
 
 public class PWMAbsoluteEncoder {
-    private static final int SAMPLE_TIME = 1026; // 1026 microseconds for 10 bit PWM
     private static final int COUNTS_PER_ROTATION = 1024;
 
     private double offset;
     private final DigitalInput encoderInput;
-    private final Counter encoderRawInputUp;
-    private final Counter encoderRawInputDown;
+    private Counter encoderRawInputUp;
+    private Counter encoderRawInputDown;
     private boolean reversed;
     private boolean testing;
 
     public PWMAbsoluteEncoder(int channel) {
-        System.out.println(channel);
         this.encoderInput = new DigitalInput(channel);
 
         this.encoderRawInputUp = new Counter(Mode.kSemiperiod); // right mode for this application
@@ -61,6 +59,21 @@ public class PWMAbsoluteEncoder {
             this.reversed = false;
             this.testing = true;
         }
+    }
+
+    public void closeEncoder() {
+        this.encoderRawInputUp.close();
+        this.encoderRawInputDown.close();
+    }
+
+    public void openEncoder() {
+        this.encoderRawInputUp = new Counter(Mode.kSemiperiod); // right mode for this application
+        this.encoderRawInputUp.setUpSource(this.encoderInput);// select the port
+        this.encoderRawInputUp.setSemiPeriodMode(true); // measure from rising edge to falling edge
+
+        this.encoderRawInputDown = new Counter(Mode.kSemiperiod); // right mode for this application
+        this.encoderRawInputDown.setUpSource(this.encoderInput);// select the port
+        this.encoderRawInputDown.setSemiPeriodMode(false); // measure from rising edge to falling edge
     }
 
     public void setOffset(double degreeOffset) {

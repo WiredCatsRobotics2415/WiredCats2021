@@ -24,6 +24,8 @@ public class Turret {
     private TalonFX turretMotor;
     private TalonFxTunable turretController;
 
+    private PWMAbsoluteEncoder turnEncoder;
+
 
     public Turret() {
         // create motors
@@ -31,6 +33,7 @@ public class Turret {
         this.rightShooterTalon = new TalonFX(RobotMap.RIGHT_TURRET_MOTOR);
         this.turretMotor = new TalonFX(RobotMap.TURN_TURRET_MOTOR);
 
+        this.turnEncoder = new PWMAbsoluteEncoder(RobotMap.TURN_TURRET_ENCODER, Constants.TURN_TURRET_ENCODER_OFFSET, RobotMap.TURN_TURRET_ENCODER_REV);
         // declare settings for motors
         this.leftShooterTalon.configFactoryDefault(Constants.kCanTimeoutMs);
         this.rightShooterTalon.configFactoryDefault(Constants.kCanTimeoutMs);
@@ -81,7 +84,9 @@ public class Turret {
         this.turretController = new TalonFxTunable(this.turretMotor, Constants.TURRET_PID, ControlMode.Position);
 
         this.shooterController.setSetpoint(0);
-        this.turretController.setSetpoint(0); // should be initial encoder value
+        this.turretController.setSetpoint(turnEncoder.getRotationDegrees());
+
+        this.turnEncoder.closeEncoder();
     }
 
     public void setShooterSpeed(double speed) {
@@ -125,6 +130,14 @@ public class Turret {
 
     public TalonFX getShooter() {
         return this.turretMotor;
+    }
+
+    public void startEncoder() {
+        this.turnEncoder.openEncoder();
+    }
+
+    public void stopEncoder() {
+        this.turnEncoder.closeEncoder();
     }
 
 }

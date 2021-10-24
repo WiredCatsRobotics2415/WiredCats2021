@@ -49,7 +49,7 @@ public class Feeder {
     }
 
     public void runClimber(double speed) {
-        if (!climber) {
+        if (climber) {
             this.motor.set(ControlMode.PercentOutput, speed);
         }
     }
