@@ -12,6 +12,7 @@ import frc.robot.Constants;
 import frc.robot.RobotMap;
 
 public class Spindexer {
+    private static final double CURRENT_MAX = Double.MAX_VALUE;
     private TalonFX motor;
     private Solenoid solenoid; 
     private boolean climber;
@@ -60,7 +61,7 @@ public class Spindexer {
     }
 
     public void toggleMotor(double speed) {
-        if (running) {
+        if (running && speed == this.speed) {
             this.motor.set(ControlMode.PercentOutput, 0);
             running = false;
             this.speed = 0;

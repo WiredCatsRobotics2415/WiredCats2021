@@ -7,10 +7,6 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
-import com.revrobotics.CANPIDController;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
-import com.revrobotics.CANSparkMax.IdleMode;
 
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -25,6 +21,8 @@ public class Turret {
     private TalonFxTunable turretController;
 
     private PWMAbsoluteEncoder turnEncoder;
+
+    private boolean running;
 
 
     public Turret() {
@@ -94,6 +92,21 @@ public class Turret {
         shooterController.setSetpoint(speed);
     }
 
+    public void toggleShooterSpeed(double speed) {
+        if (running && speed == shooterController.getSetpoint()) {
+            shooterController.setSetpoint(0);
+            rightShooterTalon.set(ControlMode.PercentOutput, 0);
+            running = false;
+        } else {
+            shooterController.setSetpoint(speed);
+            running = true;
+        }
+    }
+
+    public boolean getShooterRunning() {
+        return this.running;
+    }
+
     public double getShooterSpeed() {
         return rightShooterTalon.getSelectedSensorVelocity(0);
     }
@@ -129,6 +142,10 @@ public class Turret {
     }
 
     public TalonFX getShooter() {
+        return this.rightShooterTalon;
+    }
+
+    public TalonFX getTurret() {
         return this.turretMotor;
     }
 

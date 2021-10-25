@@ -36,12 +36,6 @@ public class Robot extends TimedRobot {
     private static SwerveDrive swerveDrive;
     private static OI oi;
     public static final String saveName = "WiredCats2021";
-    private double shooterVelocity;
-    private double hoodAngle;
-    private double turretAngle;
-    private double turretP, turretD, turretF;
-    private NetworkTable table;
-    private NetworkTableEntry tx, ty, ta;
 
 
     /**
@@ -52,27 +46,13 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         turret = new Turret();
         swerveDrive = new SwerveDrive(Constants.SWERVE_TUNING, Constants.SWERVE_LOGGING);
-        //intake = new Intake();
+        intake = new Intake();
         spindexer = new Spindexer();
         feeder = new Feeder();
         gearbox = new Gearbox(spindexer, feeder);
         pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
-        //compressor = new Compressor(RobotMap.PCM_ID);
-        oi = new OI();
-        this.shooterVelocity = 0;
-        SmartDashboard.putNumber("Shooter Velocity", this.shooterVelocity);
-        this.turretAngle = turret.getTurretAngle();
-        SmartDashboard.putNumber("Turret Angle", this.turretAngle);
-        this.turretP = 0;
-        this.turretD = 0;
-        this.turretF = 0;
-        SmartDashboard.putNumber("Turret P", this.turretP);
-        SmartDashboard.putNumber("Turret D", this.turretD);
-        SmartDashboard.putNumber("Turret F", this.turretF);
-        table = NetworkTableInstance.getDefault().getTable("limelight");
-        tx = table.getEntry("tx");
-        ty = table.getEntry("ty");
-        ta = table.getEntry("ta");
+        compressor = new Compressor(RobotMap.PCM_ID);
+        oi = new OI(turret);
     }
 
     /**
@@ -124,16 +104,6 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         
         //read values periodically
-        double x = tx.getDouble(0.0);
-        double y = ty.getDouble(0.0);
-        double area = ta.getDouble(0.0);
-        double distance = (49.5/Math.tan(27.0+y));
-
-        //post to smart dashboard periodically
-        SmartDashboard.putNumber("LimelightX", x);
-        SmartDashboard.putNumber("LimelightY", y);
-        SmartDashboard.putNumber("Distance", distance);
-        SmartDashboard.putNumber("LimelightArea", area);
         if (!Constants.ZEROING) {
             swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
             if (oi.getRawButtonPressed(14)) {
@@ -148,18 +118,28 @@ public class Robot extends TimedRobot {
                 gearbox.toggleClimber();
             }
             if (oi.getAutoAimToggle()) {
-                turret.setTurretAngle(turret.getTurretAngle()+x);
+                turret.setTurretAngle(oi.getTurretAngle(turret));
+            }
+            if (oi.getShooterToggle()) {
+                turret.toggleShooterSpeed(oi.getShooterSpeed());
+                if (!turret.getShooterRunning()) feeder.runFeeder(0);
             }
             if (oi.getClimberDown()) {
                 if (gearbox.getClimber()) gearbox.toggleClimberMove(-0.5);
+                else if (turret.getShooterRunning()) {
+                    feeder.runFeeder(0.5); 
+                    spindexer.toggleMotor(-0.25);
+                }
                 else spindexer.toggleMotor(-0.25);
             } else if (oi.getClimberUp()) {
                 if (gearbox.getClimber()) gearbox.toggleClimberMove(0.5);
+                else if (turret.getShooterRunning()) {
+                    feeder.runFeeder(0.5); 
+                    spindexer.toggleMotor(0.25);
+                }
                 else spindexer.toggleMotor(0.25);
             }
-            if (oi.getTurretToggle()) {
-                
-            }
+            spindexer.checkCurrent();
         } else {
             if (oi.getRawButtonPressed(1)) {
                 swerveDrive.printModuleEncoders(Constants.SwerveModuleName.FRONT_LEFT);
@@ -174,36 +154,7 @@ public class Robot extends TimedRobot {
                 swerveDrive.printModuleEncoders(Constants.SwerveModuleName.BACK_RIGHT);
             }
         }
-        double newVelocity = SmartDashboard.getNumber("Shooter Velocity", shooterVelocity);
-        if (newVelocity != shooterVelocity) {
-            shooterVelocity = newVelocity;
-            turret.setShooterSpeed(shooterVelocity);
-        }
-        SmartDashboard.putNumber("Shooter Velocity Actual", turret.getTurretAngle());
-        SmartDashboard.putNumber("Shooter Velocity Diff", turret.getShooterSpeed()-shooterVelocity);
-        double newTurretAngle = SmartDashboard.getNumber("Turret Angle", turretAngle);
-        if (newTurretAngle != turretAngle) {
-            turretAngle = newTurretAngle;
-            turret.setTurretAngle(turretAngle);
-        }
-        /*
-        double newP = SmartDashboard.getNumber("Turret P", turretP); 
-        if (newP != turretP) {
-            turretP = newP;
-            turret.getShooter().config_kP(0, turretP);
-        }
-        double newD = SmartDashboard.getNumber("Turret D", turretD); 
-        if (newD != turretD) {
-            turretD = newD;
-            turret.getShooter().config_kD(0, turretD);
-        }
-        double newF = SmartDashboard.getNumber("Turret F", turretF); 
-        if (newF != turretF) {
-            turretF = newF;
-            turret.getShooter().config_kF(0, turretF);
-        }
-        */
-        SmartDashboard.putNumber("Turret Angle Actual", turret.getTurretAngle());
+        oi.updateShuffleboard(turret);
     }
 
     /** This function is called once when the robot is disabled. */
