@@ -124,6 +124,9 @@ public class Robot extends TimedRobot {
                 turret.toggleShooterSpeed(oi.getShooterSpeed());
                 if (!turret.getShooterRunning()) feeder.runFeeder(0);
             }
+            if (oi.getRawButtonPressed(10) && !gearbox.getClimber()) {
+                feeder.toggleMotor(0.5);
+            }
             if (oi.getClimberDown()) {
                 if (gearbox.getClimber()) gearbox.toggleClimberMove(-0.5);
                 else if (turret.getShooterRunning()) {
@@ -155,6 +158,7 @@ public class Robot extends TimedRobot {
             }
         }
         oi.updateShuffleboard(turret);
+        SmartDashboard.putNumber("Spindexer Current", spindexer.getCurrent());
     }
 
     /** This function is called once when the robot is disabled. */

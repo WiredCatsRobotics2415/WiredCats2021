@@ -1,19 +1,21 @@
 package frc.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Solenoid;
+
 import com.revrobotics.CANSparkMax;
 
 import frc.robot.RobotMap;
 
 public class Intake {
-    DoubleSolenoid leftSolenoid; 
-    DoubleSolenoid rightSolenoid; 
+    Solenoid leftSolenoid; 
+    Solenoid rightSolenoid; 
     boolean running, extended;
     CANSparkMax motor; 
 
     public Intake() {
-        //leftSolenoid = new DoubleSolenoid(RobotMap.LEFT_INTAKE_EXTEND, RobotMap.LEFT_INTAKE_RETRACT);
-        //rightSolenoid = new DoubleSolenoid(RobotMap.RIGHT_INTAKE_EXTEND, RobotMap.RIGHT_INTAKE_RETRACT);
+        leftSolenoid = new Solenoid(RobotMap.PCM_ID, RobotMap.LEFT_INTAKE);
+        rightSolenoid = new Solenoid(RobotMap.PCM_ID, RobotMap.RIGHT_INTAKE);
         motor = new CANSparkMax(RobotMap.INTAKE_MOTOR, CANSparkMax.MotorType.kBrushless);
         stopMotor();
         retract();
@@ -22,8 +24,9 @@ public class Intake {
     }
 
     public void extend() {
-        leftSolenoid.set(DoubleSolenoid.Value.kForward);  
-        rightSolenoid.set(DoubleSolenoid.Value.kForward); 
+        leftSolenoid.set(true);  
+        rightSolenoid.set(true); 
+        this.extended = true;
     }
 
     public void startMotor() {
@@ -47,7 +50,8 @@ public class Intake {
     }
 
     public void retract() {
-        leftSolenoid.set(DoubleSolenoid.Value.kReverse);
-        rightSolenoid.set(DoubleSolenoid.Value.kReverse);
+        leftSolenoid.set(false);
+        rightSolenoid.set(false);
+        this.extended = false;
     }
 }

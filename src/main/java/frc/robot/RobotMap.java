@@ -37,10 +37,8 @@ public class RobotMap {
 
     // Intake
     public static final int INTAKE_MOTOR = 18;
-    public static final int LEFT_INTAKE_EXTEND = 0;
-    public static final int LEFT_INTAKE_RETRACT = 0;
-    public static final int RIGHT_INTAKE_EXTEND = 0;
-    public static final int RIGHT_INTAKE_RETRACT = 0;
+    public static final int LEFT_INTAKE = 5;
+    public static final int RIGHT_INTAKE = 7;
 
     public static final int LEFT_TURRET_MOTOR = 38;
     public static final int RIGHT_TURRET_MOTOR = 39;
@@ -53,11 +51,11 @@ public class RobotMap {
 
     public static final int LEFT_GEARBOX_MOTOR = 36;
     public static final int RIGHT_GEARBOX_MOTOR = 40;
-    public static final int LEFT_GEARBOX_PISTON = 0;
-    public static final int RIGHT_GEARBOX_PISTON = 0;
+    public static final int LEFT_GEARBOX_PISTON = 4;
+    public static final int RIGHT_GEARBOX_PISTON = 6;
 
     // PCM
-    public static final int PCM_ID = 10;
+    public static final int PCM_ID = 6;
     //maybe the issue
     public static final int PDP_ID = 5;
 }

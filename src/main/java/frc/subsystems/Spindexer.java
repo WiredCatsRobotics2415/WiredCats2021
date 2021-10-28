@@ -12,7 +12,7 @@ import frc.robot.Constants;
 import frc.robot.RobotMap;
 
 public class Spindexer {
-    private static final double CURRENT_MAX = Double.MAX_VALUE;
+    private static double CURRENT_MAX = 10;
     private TalonFX motor;
     private Solenoid solenoid; 
     private boolean climber;
@@ -31,7 +31,7 @@ public class Spindexer {
         this.motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40, 40, .1));
         this.motor.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
 
-        this.solenoid = new Solenoid(RobotMap.RIGHT_GEARBOX_PISTON);
+        this.solenoid = new Solenoid(RobotMap.PCM_ID, RobotMap.RIGHT_GEARBOX_PISTON);
         this.solenoid.set(false);
 
         this.climber = false;
@@ -86,8 +86,10 @@ public class Spindexer {
 
     public void checkCurrent() {
         if (!climber) {
+            if (CURRENT_MAX > 1.5) CURRENT_MAX -= 0.05;
             if (this.motor.getSupplyCurrent() > CURRENT_MAX) {
                 runSpindexer(this.speed * -1);
+                CURRENT_MAX = 10;
             }
         }
     }

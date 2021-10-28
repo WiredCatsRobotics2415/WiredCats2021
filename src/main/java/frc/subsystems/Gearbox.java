@@ -8,7 +8,7 @@ public class Gearbox {
     public Gearbox(Spindexer spindexer, Feeder feeder) {
         this.spindexer = spindexer;
         this.feeder = feeder;
-        this.climber = true;
+        this.climber = false;
     }
 
     public void toggleClimber() {

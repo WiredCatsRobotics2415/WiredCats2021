@@ -93,7 +93,7 @@ public class Turret {
     }
 
     public void toggleShooterSpeed(double speed) {
-        if (running && speed == shooterController.getSetpoint()) {
+        if (running) {
             shooterController.setSetpoint(0);
             rightShooterTalon.set(ControlMode.PercentOutput, 0);
             running = false;
@@ -111,12 +111,16 @@ public class Turret {
         return rightShooterTalon.getSelectedSensorVelocity(0);
     }
 
+    public double getShooterSetpoint() {
+        return shooterController.getSetpoint();
+    }
+
     public void stopShooter() {
         shooterController.setSetpoint(0);
     }
 
     public void setTurretAngle(double degrees) {
-        if (degrees <= 180 || degrees >= -180) {
+        if (degrees <= 90 || degrees >= -90) {
             this.turretController.setSetpoint(degrees);
             this.turretController.run();
         }

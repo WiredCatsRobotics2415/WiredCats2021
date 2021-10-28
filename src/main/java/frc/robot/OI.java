@@ -19,6 +19,7 @@ public class OI {
     private double shooterVelocity, offset;
     private double turretAngle, x;
     private double p, d, f;
+    private double setValue;
 
     public OI(Turret turret) {
         this(0, turret);
@@ -33,8 +34,9 @@ public class OI {
         this.tuningMotor = turret.getTurret();
         this.shooterVelocity = turret.getShooterSpeed();
         this.turretAngle = turret.getTurretAngle();
-        this.tuning = false;
+        this.tuning = true;
         this.offset = 0;
+        this.setValue = 0;
         this.x = 0;
         this.p = 0;
         this.d = 0;
@@ -92,7 +94,7 @@ public class OI {
     }
 
     public double getShooterSpeed() {
-        return 0.00967848 * Math.pow((distance + 283.394), 2) + 6240.68 + offset;  
+        return 0.0164169 * Math.pow((distance + 190.13), 2) + 6312.16 + offset;
     }
 
     public double getTurretAngle(Turret turret) {
@@ -103,7 +105,7 @@ public class OI {
         double y = ty.getDouble(0.0);
         double area = ta.getDouble(0.0);
         this.x = tx.getDouble(0.0);
-        this.distance = (49.5/Math.tan(27.0+y));
+        this.distance = (49.5/Math.tan((25.0+y)*(Math.PI/180.0)));
 
         //post to smart dashboard periodically
         SmartDashboard.putNumber("Limelight/LimelightX", x);
@@ -111,17 +113,19 @@ public class OI {
         SmartDashboard.putNumber("Limelight/LimelightArea", area);
 
         SmartDashboard.putNumber("Competition/Distance", distance);
+        updateCompetition(turret);
         SmartDashboard.putNumber("Competition/Shooter Velocity", this.shooterVelocity);
         SmartDashboard.putNumber("Competition/Turret Angle", this.turretAngle);
         SmartDashboard.putNumber("Competition/Shooter Velocity Offset", this.offset);
-        updateCompetition(turret);
         SmartDashboard.putNumber("Competition/Shooter Velocity Actual", turret.getShooterSpeed());
-        SmartDashboard.putNumber("Competition/Shooter Velocity Diff", turret.getShooterSpeed()-shooterVelocity + offset);
+        SmartDashboard.putNumber("Competition/Shooter Velocity Diff", turret.getShooterSpeed()-turret.getShooterSetpoint() + offset);
 
+        SmartDashboard.putNumber("Tuning/Value", turret.getTurretAngle());
+        if (tuning) updateTuning(turret);
+        SmartDashboard.putNumber("Tuning/SetValue", this.setValue);
         SmartDashboard.putNumber("Tuning/P", this.p);
         SmartDashboard.putNumber("Tuning/D", this.d);
         SmartDashboard.putNumber("Tuning/F", this.f);
-        if (tuning) updateTuning();
     }
 
 
@@ -140,7 +144,7 @@ public class OI {
         }
     }
     
-    public void updateTuning() {
+    public void updateTuning(Turret turret) {
         double newP = SmartDashboard.getNumber("Tuning/P", p); 
         if (newP != p) {
             p = newP;
@@ -155,6 +159,11 @@ public class OI {
         if (newF != f) {
             f = newF;
             tuningMotor.config_kF(0, f);
+        }
+        double newValue = SmartDashboard.getNumber("Tuning/SetValue", setValue);
+        if (newValue != setValue) {
+            setValue = newValue;
+            turret.setTurretAngle(setValue);
         }
     }
 }
