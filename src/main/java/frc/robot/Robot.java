@@ -8,13 +8,18 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.subsystems.Gearbox;
 import frc.subsystems.Intake;
 import frc.subsystems.SwerveDrive;
 import frc.subsystems.Turret;
+import frc.util.CSVReader;
+import frc.util.PathFollowerController;
+import frc.util.SwerveOdometry;
 import frc.subsystems.Spindexer;
 import frc.subsystems.Feeder;
 
@@ -35,7 +40,10 @@ public class Robot extends TimedRobot {
     private static Compressor compressor;
     private static SwerveDrive swerveDrive;
     private static OI oi;
+    public static PathFollowerController pathController;
+    public static SwerveOdometry odometry;
     public static final String saveName = "WiredCats2021";
+    private int pathCount = 0;
 
 
     /**
@@ -53,6 +61,7 @@ public class Robot extends TimedRobot {
         pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
         compressor = new Compressor(RobotMap.PCM_ID);
         oi = new OI(turret);
+        swerveDrive.zeroYaw();
     }
 
     /**
@@ -82,11 +91,45 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
+        turret.setTurretAngle(90);
+        shootAuto(5);
+        CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/grits3balldone.csv");
+        pathController = new PathFollowerController(swerveDrive, csvReader.getValues(), Constants.KS, Constants.KV,
+            Constants.KA, 1, Constants.DRIVE_DISTANCE_PID, Constants.TURNING_PID, true);
+        intake.extend();
+        intake.startMotor();
+        pathController.start();
+    }
+
+    public void shootAuto(double delay) {
+        turret.setTurretAngle(oi.getTurretAngle(turret));
+        turret.toggleShooterSpeed(oi.getShooterSpeed());
+        feeder.runFeeder(0.5);
+        spindexer.runSpindexer(0.25);
+        Timer.delay(delay);
+        turret.toggleShooterSpeed(0);
+        feeder.runFeeder(0);
+        spindexer.runSpindexer(0);
+
     }
 
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
+        if (!pathController.getFinished()) pathController.run();
+        /*
+        else if (pathCount < 1) {
+            CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/grits6balltrenchdone.csv");
+            pathController = new PathFollowerController(swerveDrive, csvReader.getValues(), Constants.KS, Constants.KV,
+                Constants.KA, 1, Constants.DRIVE_DISTANCE_PID, Constants.TURNING_PID, true);
+            pathController.start();
+            pathCount++;
+        } */else {
+            intake.stopMotor();
+            intake.retract();
+            shootAuto(5);
+            turret.setTurretAngle(0);
+        }
     }
 
     /** This function is called once when teleop is enabled. */
@@ -122,6 +165,7 @@ public class Robot extends TimedRobot {
             }
             if (oi.getShooterToggle()) {
                 turret.toggleShooterSpeed(oi.getShooterSpeed());
+                feeder.runFeeder(0.5);
                 if (!turret.getShooterRunning()) feeder.runFeeder(0);
             }
             if (oi.getRawButtonPressed(10) && !gearbox.getClimber()) {

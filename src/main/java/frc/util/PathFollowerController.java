@@ -22,6 +22,7 @@ public class PathFollowerController implements Runnable {
     private long startTime;
     private int index;
     private boolean logged;
+    private boolean done;
 
     // trajectory should be in feet and degrees
     public PathFollowerController(SwerveDrive swerveDrive, MotionState[] trajectory, double kS, double kV, double kA,
@@ -51,6 +52,7 @@ public class PathFollowerController implements Runnable {
             this.logged = false;
         } else
             this.logger = null;
+        this.done = false;
     }
 
     public PathFollowerController(SwerveDrive swerveDrive, double[][] trajectory, double kS, double kV, double kA,
@@ -80,6 +82,7 @@ public class PathFollowerController implements Runnable {
                 this.logged = true;
             }
             this.swerveDrive.drive(0, 0, 0);
+            done = true;
             return;
         }
         MotionState currentState = this.trajectory[this.index];
@@ -162,5 +165,9 @@ public class PathFollowerController implements Runnable {
             }
         }
         return trajectory;
+    }
+
+    public boolean getFinished() {
+        return this.done;
     }
 }

@@ -116,6 +116,7 @@ public class OI {
         updateCompetition(turret);
         SmartDashboard.putNumber("Competition/Shooter Velocity", this.shooterVelocity);
         SmartDashboard.putNumber("Competition/Turret Angle", this.turretAngle);
+        SmartDashboard.putNumber("Competition/Turret Angle Actual", turret.getTurretAngle());
         SmartDashboard.putNumber("Competition/Shooter Velocity Offset", this.offset);
         SmartDashboard.putNumber("Competition/Shooter Velocity Actual", turret.getShooterSpeed());
         SmartDashboard.putNumber("Competition/Shooter Velocity Diff", turret.getShooterSpeed()-turret.getShooterSetpoint() + offset);

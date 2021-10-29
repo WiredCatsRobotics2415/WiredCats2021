@@ -90,6 +90,7 @@ public class Turret {
     public void setShooterSpeed(double speed) {
         System.out.println("Set to " + speed);
         shooterController.setSetpoint(speed);
+        running = true;
     }
 
     public void toggleShooterSpeed(double speed) {
@@ -117,6 +118,7 @@ public class Turret {
 
     public void stopShooter() {
         shooterController.setSetpoint(0);
+        running = false;
     }
 
     public void setTurretAngle(double degrees) {
