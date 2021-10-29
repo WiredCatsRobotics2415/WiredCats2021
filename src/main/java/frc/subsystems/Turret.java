@@ -122,7 +122,7 @@ public class Turret {
     }
 
     public void setTurretAngle(double degrees) {
-        if (degrees <= 90 || degrees >= -90) {
+        if (degrees <= 100 || degrees >= -100) {
             this.turretController.setSetpoint(degrees);
             this.turretController.run();
         }

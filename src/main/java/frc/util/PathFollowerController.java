@@ -119,7 +119,7 @@ public class PathFollowerController implements Runnable {
         //this.swerveDrive.velocityDriveWithFF(velocity.getX(), velocity.getY(), theta*-0.05,//-currentState.rotationPercent,
         //        feedForwardVector.getLength()); //rotation is opposite for swerve drive
         feedForwardVector = feedForwardVector.scale(1.0 / Robot.getPDPVoltage());
-        this.swerveDrive.drive(feedForwardVector.getX(), feedForwardVector.getY(), theta*-0.005);
+        this.swerveDrive.drive(-1 * feedForwardVector.getY(), feedForwardVector.getX(), theta*-0.005);
     }
 
     private int getClosestStateIndex(long time) { // in millis

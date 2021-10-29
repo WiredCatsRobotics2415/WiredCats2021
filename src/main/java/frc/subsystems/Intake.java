@@ -29,14 +29,14 @@ public class Intake {
         this.extended = true;
     }
 
-    public void startMotor() {
-        motor.set(0.5);
+    public void startMotor(double speed) {
+        motor.set(speed);
         running = true;
     }
 
-    public void toggleMotor() {
+    public void toggleMotor(double speed) {
         if (running) stopMotor();
-        else startMotor();
+        else startMotor(speed);
     }
     
     public void toggleExtend() {

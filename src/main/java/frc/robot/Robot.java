@@ -92,20 +92,22 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         turret.setTurretAngle(90);
-        shootAuto(5);
+        shootAuto(3);
         CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/grits3balldone.csv");
         pathController = new PathFollowerController(swerveDrive, csvReader.getValues(), Constants.KS, Constants.KV,
             Constants.KA, 1, Constants.DRIVE_DISTANCE_PID, Constants.TURNING_PID, true);
-        intake.extend();
-        intake.startMotor();
+        //intake.extend();
+        //intake.startMotor(0.5);
+        spindexer.toggleMotor(0.5);
         pathController.start();
     }
 
     public void shootAuto(double delay) {
         turret.setTurretAngle(oi.getTurretAngle(turret));
         turret.toggleShooterSpeed(oi.getShooterSpeed());
+        Timer.delay(2.5);
         feeder.runFeeder(0.5);
-        spindexer.runSpindexer(0.25);
+        spindexer.runSpindexer(0.5);
         Timer.delay(delay);
         turret.toggleShooterSpeed(0);
         feeder.runFeeder(0);
@@ -117,19 +119,19 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         if (!pathController.getFinished()) pathController.run();
-        /*
-        else if (pathCount < 1) {
+        /*else if (pathCount < 1) {
             CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/grits6balltrenchdone.csv");
             pathController = new PathFollowerController(swerveDrive, csvReader.getValues(), Constants.KS, Constants.KV,
                 Constants.KA, 1, Constants.DRIVE_DISTANCE_PID, Constants.TURNING_PID, true);
             pathController.start();
             pathCount++;
-        } */else {
+        } else {
             intake.stopMotor();
             intake.retract();
-            shootAuto(5);
+            shootAuto(3);
             turret.setTurretAngle(0);
         }
+        */
     }
 
     /** This function is called once when teleop is enabled. */
@@ -140,6 +142,8 @@ public class Robot extends TimedRobot {
         turret.zeroTurret();
         turret.stopEncoder();
         swerveDrive.startEncoder();
+        intake.retract();
+        intake.stopMotor();
     }
 
     /** This function is called periodically during operator control. */
@@ -148,14 +152,14 @@ public class Robot extends TimedRobot {
         
         //read values periodically
         if (!Constants.ZEROING) {
-            swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
+            swerveDrive.drive(-1 * oi.getY(), oi.getX(), oi.getRotation());
             if (oi.getRawButtonPressed(14)) {
                 System.out.println("zero Encoders");
                 swerveDrive.zeroEncoders();
             }
             if (oi.getIntakeToggle() && !gearbox.getClimber()) {
                 intake.toggleExtend();
-                intake.toggleMotor();
+                intake.toggleMotor(0.5);
             }
             if (oi.getClimberToggle()) {
                 gearbox.toggleClimber();
@@ -171,20 +175,23 @@ public class Robot extends TimedRobot {
             if (oi.getRawButtonPressed(10) && !gearbox.getClimber()) {
                 feeder.toggleMotor(0.5);
             }
+            if (oi.getRawButtonPressed(9) ) {
+                intake.toggleMotor(-0.5);
+            }
             if (oi.getClimberDown()) {
                 if (gearbox.getClimber()) gearbox.toggleClimberMove(-0.5);
                 else if (turret.getShooterRunning()) {
                     feeder.runFeeder(0.5); 
-                    spindexer.toggleMotor(-0.25);
+                    spindexer.toggleMotor(-0.5);
                 }
-                else spindexer.toggleMotor(-0.25);
+                else spindexer.toggleMotor(-0.5);
             } else if (oi.getClimberUp()) {
                 if (gearbox.getClimber()) gearbox.toggleClimberMove(0.5);
                 else if (turret.getShooterRunning()) {
                     feeder.runFeeder(0.5); 
-                    spindexer.toggleMotor(0.25);
+                    spindexer.toggleMotor(0.5);
                 }
-                else spindexer.toggleMotor(0.25);
+                else spindexer.toggleMotor(0.5);
             }
             spindexer.checkCurrent();
         } else {

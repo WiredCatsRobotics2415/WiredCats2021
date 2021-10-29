@@ -61,13 +61,12 @@ public class SwerveDrive {
 
     public void zeroYaw() {
         navX.zeroYaw();
-        navX.setAngleAdjustment(180);
     }
 
     public void drive(double x, double y, double r, boolean fieldOriented) {
         Vector2D strafeVector = Vector2D.vectorFromRectForm(x, y);
         if (fieldOriented) {
-            double yaw = navX.getAngle();
+            double yaw = navX.getYaw();
             if (!Constants.NAVX_FACING_UP) yaw *= -1;
             strafeVector = strafeVector.rotate(yaw, true);
         }
