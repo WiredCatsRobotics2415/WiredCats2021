@@ -95,12 +95,16 @@ public class OI {
     }
 
     public double getShooterSpeed() {
-        if (distance >= 125) return 0.026781 * Math.pow((distance -16.3842), 2) + 6997.53 + offset;
-        else return Math.min(-19.1176 * distance + 8500.49, 6900);
+        if (distance >= 120) return 0.026781 * Math.pow((distance -16.3842), 2) + 6997.53 + offset;
+        else return Math.min(-19.1176 * distance + 8500.49, 7200);
     }
 
     public double getTurretAngle(Turret turret) {
-        return turret.getTurretAngle() + x;
+        this.x = tx.getDouble(0.0);
+        return turret.getTurretAngle() + this.x;
+    }
+    public double getTX() {
+        return tx.getDouble(0.0);
     }
 
     public void updateShuffleboard(Turret turret) {

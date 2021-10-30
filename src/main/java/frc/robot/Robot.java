@@ -99,11 +99,13 @@ public class Robot extends TimedRobot {
         //intake.extend();
         //intake.startMotor(0.5);
         spindexer.toggleMotor(0.5);
-        pathController.start();
+        //pathController.start();
     }
 
     public void shootAuto(double delay) {
-        turret.setTurretAngle(oi.getTurretAngle(turret));
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+        NetworkTableEntry tx = table.getEntry("tx");
+        turret.setTurretAngle(90+tx.getDouble(0.0));
         turret.toggleShooterSpeed(oi.getShooterSpeed());
         Timer.delay(2.5);
         feeder.runFeeder(0.5);
@@ -118,7 +120,7 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
-        if (!pathController.getFinished()) pathController.run();
+        //if (!pathController.getFinished()) pathController.run();
         /*else if (pathCount < 1) {
             CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/grits6balltrenchdone.csv");
             pathController = new PathFollowerController(swerveDrive, csvReader.getValues(), Constants.KS, Constants.KV,
