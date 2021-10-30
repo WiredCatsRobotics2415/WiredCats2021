@@ -50,7 +50,7 @@ public class SwerveModule {
                 azimuthEncoderReversed);
 
         this.driveMotor.configFactoryDefault(Constants.kCanTimeoutMs);
-        this.driveMotor.configFactoryDefault(Constants.kCanTimeoutMs);
+        this.azimuthMotor.configFactoryDefault(Constants.kCanTimeoutMs);
         // Missing current limit
         this.driveMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
                 Constants.kCanTimeoutMs);
