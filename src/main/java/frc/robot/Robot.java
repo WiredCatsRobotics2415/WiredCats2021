@@ -45,6 +45,7 @@ public class Robot extends TimedRobot {
     public static final String saveName = "WiredCats2021";
     private int pathCount = 0;
     int counter = 10000;
+    boolean turning = false;
 
 
     /**
@@ -63,7 +64,7 @@ public class Robot extends TimedRobot {
         compressor = new Compressor(RobotMap.PCM_ID);
         oi = new OI(turret);
         swerveDrive.zeroYaw();
-        counter = 2500;
+        counter = 10;
     }
 
     /**
@@ -95,9 +96,9 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         turret.setTurretAngle(90);
         shootAuto(3);
-        CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/grits3balldone.csv");
-        pathController = new PathFollowerController(swerveDrive, csvReader.getValues(), Constants.KS, Constants.KV,
-            Constants.KA, 1, Constants.DRIVE_DISTANCE_PID, Constants.TURNING_PID, true);
+        //CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/grits3balldone.csv");
+        //pathController = new PathFollowerController(swerveDrive, csvReader.getValues(), Constants.KS, Constants.KV,
+          //  Constants.KA, 1, Constants.DRIVE_DISTANCE_PID, Constants.TURNING_PID, true);
         //intake.extend();
         //intake.startMotor(0.5);
         //spindexer.toggleMotor(0.5);
@@ -161,7 +162,13 @@ public class Robot extends TimedRobot {
         
         //read values periodically
         if (!Constants.ZEROING) {
-            swerveDrive.drive(-1 * oi.getY(), oi.getX(), oi.getRotation());
+            swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
+            if (Math.abs(oi.getTX()) > Constants.DEADBAND && !turning) {
+                turret.setTurretAngle(oi.getTurretAngle(turret));
+                turning = true;
+                counter = 200;
+            } else if (counter > 0) counter--;
+            else turning = false;
             if (oi.getRawButtonPressed(14)) {
                 System.out.println("zero Encoders");
                 swerveDrive.zeroEncoders();
@@ -173,9 +180,9 @@ public class Robot extends TimedRobot {
             if (oi.getClimberToggle()) {
                 gearbox.toggleClimber();
             }
-            if (oi.getAutoAimToggle()) {
-                turret.setTurretAngle(oi.getTurretAngle(turret));
-            }
+            //if (oi.getAutoAimToggle()) {
+              //  turret.setTurretAngle(oi.getTurretAngle(turret));
+            //}
             if (oi.getShooterToggle()) {
                 turret.toggleShooterSpeed(oi.getShooterSpeed());
                 feeder.runFeeder(0.5);

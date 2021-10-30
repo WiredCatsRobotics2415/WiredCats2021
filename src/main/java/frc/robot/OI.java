@@ -102,6 +102,9 @@ public class OI {
     public double getTurretAngle(Turret turret) {
         return turret.getTurretAngle() + x;
     }
+    public double getTX() {
+        return tx.getDouble(0.0);
+    }
 
     public void updateShuffleboard(Turret turret) {
         double y = ty.getDouble(0.0);
