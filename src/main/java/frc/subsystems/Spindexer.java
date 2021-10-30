@@ -61,14 +61,14 @@ public class Spindexer {
     }
 
     public void toggleMotor(double speed) {
-        if (running && speed == this.speed) {
+        if (running) {
+            this.speed = 0;
             this.motor.set(ControlMode.PercentOutput, 0);
             running = false;
-            this.speed = 0;
         } else {
+            this.speed = speed;
             this.motor.set(ControlMode.PercentOutput, speed);
             running = true;
-            this.speed = speed;
         }
     }
     

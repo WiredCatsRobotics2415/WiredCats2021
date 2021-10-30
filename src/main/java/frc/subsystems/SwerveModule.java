@@ -107,7 +107,7 @@ public class SwerveModule {
 
         this.zeroEncoder();
 
-        this.prevAzimuthSetpoint = this.azimuthEncoder.getRotationDegrees();
+        this.prevAzimuthSetpoint = getAzimuthControllerRatio(this.azimuthEncoder.getRotationRaw(), 1024);
         this.turns = 0;
 
         this.logger = null;
@@ -128,7 +128,7 @@ public class SwerveModule {
         }
         this.name = name;
     }
-
+/*
     public SwerveModule(boolean testing, int driveMotorID, int azimuthMotorID, boolean azimuthRev, int azimuthEncoderChannel,
     double positionX, double positionY, PIDValue pidValues, double azimuthEncoderOffset,
     boolean azimuthEncoderReversed, PIDFValue drivePIDF) {
@@ -180,8 +180,9 @@ public class SwerveModule {
             this.driveController = new TalonFxTunable(this.driveMotor, drivePIDF, ControlMode.Velocity);
 
             //this.azimuthController.setSetpoint(this.azimuthEncoder.getRotationDegrees());
-            setAzimuthControllerDegree(this.azimuthEncoder.getRotationDegrees());
-            this.prevAzimuthSetpoint = this.azimuthEncoder.getRotationDegrees();
+            //setAzimuthControllerDegree(this.azimuthEncoder.getRotationDegrees());
+            setAzimuthControllerRatio(this.azimuthEncoder.getRotationRaw(), 1024);
+            this.prevAzimuthSetpoint = this.azimuthEncoder.getRotationRaw();
             this.turns = 0;
             this.testing = false;
         } else {
@@ -201,6 +202,7 @@ public class SwerveModule {
             this.turns = 0;
         }
     }
+    */
 
     public void setVector(Vector2D vector) {
         if (vector.getLength() != 0) {
@@ -245,11 +247,18 @@ public class SwerveModule {
         //this.azimuthController.setSetpoint(degrees + turns * 360.0);
         setAzimuthControllerDegree(degrees + turns * 360.0);
         this.azimuthController.run();
-        this.prevAzimuthSetpoint = degrees;
+        this.prevAzimuthSetpoint = getAzimuthControllerRatio(degrees + turns * 360.0, 360);
     }
 
     private void setAzimuthControllerDegree(double deg) {
         this.azimuthController.setSetpoint(deg / Constants.SWERVE_AZIMUTH_TICKS_TO_DEEGREE);
+    }
+
+    private void setAzimuthControllerRatio(double value, double max) {
+        this.azimuthController.setSetpoint(value / (max / (2048 * 56.0 / 3.0)));
+    }
+    private double getAzimuthControllerRatio(double value, double max) {
+        return (value / (max / (2048 * 56.0 / 3.0)));
     }
 
     public void setPercentSpeed(double percent) {
@@ -264,15 +273,15 @@ public class SwerveModule {
 
     public void zeroEncoder() {
         this.azimuthMotor.set(ControlMode.PercentOutput, 0.0);
-        ErrorCode error = this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotationDegrees(), 0,
+        ErrorCode error = this.azimuthMotor.setSelectedSensorPosition(getAzimuthControllerRatio(this.azimuthEncoder.getRotationRaw(), 1024), 0,
                 Constants.kCanTimeoutMs);
         if (!error.equals(ErrorCode.OK)) {
             System.out.println("failed zero");
-            error = this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotationDegrees(), 0,
+            error = this.azimuthMotor.setSelectedSensorPosition(getAzimuthControllerRatio(this.azimuthEncoder.getRotationRaw(), 1024), 0,
                     Constants.kCanTimeoutMs);
         }
         if(!Constants.ZEROING) {
-            setAzimuthControllerDegree(this.azimuthEncoder.getRotationDegrees());
+            setAzimuthControllerRatio(this.azimuthEncoder.getRotationRaw(), 1024);
             //this.azimuthController.setSetpoint(this.azimuthEncoder.getRotationDegrees());
         }
         this.turns = 0;

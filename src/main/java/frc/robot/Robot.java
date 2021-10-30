@@ -44,6 +44,7 @@ public class Robot extends TimedRobot {
     public static SwerveOdometry odometry;
     public static final String saveName = "WiredCats2021";
     private int pathCount = 0;
+    int counter = 10000;
 
 
     /**
@@ -93,13 +94,14 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         turret.setTurretAngle(90);
         shootAuto(3);
-        CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/grits3balldone.csv");
-        pathController = new PathFollowerController(swerveDrive, csvReader.getValues(), Constants.KS, Constants.KV,
-            Constants.KA, 1, Constants.DRIVE_DISTANCE_PID, Constants.TURNING_PID, true);
+        //CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/grits3balldone.csv");
+        //pathController = new PathFollowerController(swerveDrive, csvReader.getValues(), Constants.KS, Constants.KV,
+            //Constants.KA, 1, Constants.DRIVE_DISTANCE_PID, Constants.TURNING_PID, true);
         //intake.extend();
         //intake.startMotor(0.5);
-        spindexer.toggleMotor(0.5);
+        //spindexer.toggleMotor(0.5);
         //pathController.start();
+        counter = 10000;
     }
 
     public void shootAuto(double delay) {
@@ -120,6 +122,12 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
+        if (counter > 0) {
+            swerveDrive.drive(0, 1, 0);
+            counter--;
+        } else {
+            swerveDrive.drive(0, 0, 0);
+        }
         //if (!pathController.getFinished()) pathController.run();
         /*else if (pathCount < 1) {
             CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/grits6balltrenchdone.csv");
@@ -139,11 +147,6 @@ public class Robot extends TimedRobot {
     /** This function is called once when teleop is enabled. */
     @Override
     public void teleopInit() {
-        swerveDrive.stopEncoder();
-        turret.startEncoder();
-        turret.zeroTurret();
-        turret.stopEncoder();
-        swerveDrive.startEncoder();
         intake.retract();
         intake.stopMotor();
     }
