@@ -44,6 +44,7 @@ public class Robot extends TimedRobot {
     public static SwerveOdometry odometry;
     public static final String saveName = "WiredCats2021";
     private int pathCount = 0;
+    int counter = 10000;
 
 
     /**
@@ -62,6 +63,7 @@ public class Robot extends TimedRobot {
         compressor = new Compressor(RobotMap.PCM_ID);
         oi = new OI(turret);
         swerveDrive.zeroYaw();
+        counter = 2500;
     }
 
     /**
@@ -98,11 +100,12 @@ public class Robot extends TimedRobot {
             Constants.KA, 1, Constants.DRIVE_DISTANCE_PID, Constants.TURNING_PID, true);
         //intake.extend();
         //intake.startMotor(0.5);
-        spindexer.toggleMotor(0.5);
-        pathController.start();
+        //spindexer.toggleMotor(0.5);
+        //pathController.start();
     }
 
     public void shootAuto(double delay) {
+        Timer.delay(5);
         turret.setTurretAngle(oi.getTurretAngle(turret));
         turret.toggleShooterSpeed(oi.getShooterSpeed());
         Timer.delay(2.5);
@@ -118,7 +121,13 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
-        if (!pathController.getFinished()) pathController.run();
+        if (counter > 0) {
+            swerveDrive.drive(0, -1, 0);
+            counter--;
+        } else {
+            swerveDrive.drive(0, 0, 0);
+        }
+        //if (!pathController.getFinished()) pathController.run();
         /*else if (pathCount < 1) {
             CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/grits6balltrenchdone.csv");
             pathController = new PathFollowerController(swerveDrive, csvReader.getValues(), Constants.KS, Constants.KV,
