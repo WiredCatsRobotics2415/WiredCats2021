@@ -9,6 +9,8 @@ import frc.util.pid.PIDValue;
 public class Constants {
     public static final int kCanTimeoutMs = 30;
 
+    public static final double SWERVE_AZIMUTH_TICKS_TO_DEEGREE = 360.0 / (2048 * 56.0 / 3.0);
+
     public static final PIDValue FRONT_LEFT_AZIMUTH_PID = new PIDValue(28.5, 0.0, 1);
     public static final PIDValue FRONT_RIGHT_AZIMUTH_PID = new PIDValue(25.5, 0.0, 2);
     public static final PIDValue BACK_LEFT_AZIMUTH_PID = new PIDValue(25, 0.0, 4);
@@ -33,6 +35,7 @@ public class Constants {
     public static final double FRONT_RIGHT_AZIMUTH_ENCODER_OFFSET = 4.9-90;//322-90;//318.9-90;//-50.2;//318.9-90;//72.75+180.0;//163.28 + 180;// 165.24-180;//146.5+180;//5.976+180;
     public static final double BACK_LEFT_AZIMUTH_ENCODER_OFFSET = 285.5+90;//285.5+90;//288.6+90;//-74.5;//288.6+90;//218;// 219.7;
     public static final double BACK_RIGHT_AZIMUTH_ENCODER_OFFSET = 249.3-90;//238.4-90;//220-90;//-126.2;//220-90;//212.35;//214.1-4;//211 + 2;// 211.6;
+    
     public static final double MOTORMIN = 0.05;
     public static final double DEADBAND = 0.2;
 
