@@ -8,10 +8,10 @@ import frc.robot.RobotMap;
 import frc.util.Vector2D;
 
 public class SwerveDrive {
-    private final SwerveModule frontLeftModule;
-    private final SwerveModule frontRightModule;
-    private final SwerveModule backLeftModule;
-    private final SwerveModule backRightModule;
+    public final SwerveModule frontLeftModule;
+    public final SwerveModule frontRightModule;
+    public final SwerveModule backLeftModule;
+    public final SwerveModule backRightModule;
 
     private final AHRS navX;
 

@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
     private static Turret turret;
     private static PowerDistributionPanel pdp;
     private static Compressor compressor;
-    private static SwerveDrive swerveDrive;
+    public static SwerveDrive swerveDrive;
     private static OI oi;
     public static PathFollowerController pathController;
     public static SwerveOdometry odometry;
@@ -163,12 +163,13 @@ public class Robot extends TimedRobot {
         //read values periodically
         if (!Constants.ZEROING) {
             swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
-            if (Math.abs(oi.getTX()) > Constants.DEADBAND && !turning) {
+            /*if (Math.abs(oi.getTX()) > Constants.DEADBAND && !turning) {
                 turret.setTurretAngle(oi.getTurretAngle(turret));
                 turning = true;
                 counter = 200;
             } else if (counter > 0) counter--;
             else turning = false;
+            */
             if (oi.getRawButtonPressed(14)) {
                 System.out.println("zero Encoders");
                 swerveDrive.zeroEncoders();
@@ -192,7 +193,7 @@ public class Robot extends TimedRobot {
                 feeder.toggleMotor(0.5);
             }
             if (oi.getRawButtonPressed(9) ) {
-                intake.toggleMotor(-0.5);
+                swerveDrive.zeroYaw();
             }
             if (oi.getClimberDown()) {
                 if (gearbox.getClimber()) gearbox.toggleClimberMove(-0.5);

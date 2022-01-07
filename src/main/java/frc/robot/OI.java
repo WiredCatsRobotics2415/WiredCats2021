@@ -133,6 +133,21 @@ public class OI {
         SmartDashboard.putNumber("Tuning/D", this.d);        
         SmartDashboard.putNumber("Tuning/I", this.i);
         SmartDashboard.putNumber("Tuning/F", this.f);
+
+        SmartDashboard.putBoolean("Swerve/FLazReverse", Robot.swerveDrive.frontLeftModule.azimuthReversed);
+        SmartDashboard.putBoolean("Swerve/FRazReverse", Robot.swerveDrive.frontRightModule.azimuthReversed);
+        SmartDashboard.putBoolean("Swerve/BLazReverse", Robot.swerveDrive.backLeftModule.azimuthReversed);
+        SmartDashboard.putBoolean("Swerve/BRazReverse", Robot.swerveDrive.backRightModule.azimuthReversed);
+
+        SmartDashboard.putNumber("Swerve/FLazSetpoint", Robot.swerveDrive.frontLeftModule.getAzimuthSetpoint());
+        SmartDashboard.putNumber("Swerve/FRazSetpoint", Robot.swerveDrive.frontRightModule.getAzimuthSetpoint());
+        SmartDashboard.putNumber("Swerve/BLazSetpoint", Robot.swerveDrive.backLeftModule.getAzimuthSetpoint());
+        SmartDashboard.putNumber("Swerve/BRazSetpoint", Robot.swerveDrive.backRightModule.getAzimuthSetpoint());
+
+        SmartDashboard.putNumber("Swerve/FLdrSetpoint", Robot.swerveDrive.frontLeftModule.getDrivePosition());
+        SmartDashboard.putNumber("Swerve/FRdrSetpoint", Robot.swerveDrive.frontRightModule.getDrivePosition());
+        SmartDashboard.putNumber("Swerve/BLdrSetpoint", Robot.swerveDrive.backLeftModule.getDrivePosition());
+        SmartDashboard.putNumber("Swerve/BRdrSetpoint", Robot.swerveDrive.backRightModule.getDrivePosition());
     }
 
 

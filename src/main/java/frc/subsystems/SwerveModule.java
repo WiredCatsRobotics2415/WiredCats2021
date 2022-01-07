@@ -25,8 +25,8 @@ public class SwerveModule {
 
     private final PWMAbsoluteEncoder azimuthEncoder; // absolute encoder
 
-    private final TalonFxTunable azimuthController;
-    private final TalonFxTunable driveController;
+    public final TalonFxTunable azimuthController;
+    public final TalonFxTunable driveController;
 
     private MotorLogger logger;
 
@@ -36,7 +36,7 @@ public class SwerveModule {
 
     private double prevAzimuthSetpoint;
     private int turns;
-    private boolean azimuthReversed;
+    public boolean azimuthReversed;
     private Constants.SwerveModuleName name;
     private boolean testing;
 
