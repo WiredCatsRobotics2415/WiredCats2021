@@ -58,7 +58,7 @@ public class SwerveModule {
         this.azimuthMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
                 Constants.kCanTimeoutMs);
 
-        //this.azimuthMotor.configSelectedFeedbackCoefficient(Constants.SWERVE_AZIMUTH_TICKS_TO_DEEGREE, 0, Constants.kCanTimeoutMs);
+        this.azimuthMotor.configSelectedFeedbackCoefficient(Constants.SWERVE_AZIMUTH_GEAR_RATIO, 0, Constants.kCanTimeoutMs);
 
         this.driveMotor.setNeutralMode(Constants.DRIVE_BREAK_MODE);
         if(Constants.ZEROING) {
@@ -206,7 +206,7 @@ public class SwerveModule {
 
     public void setVector(Vector2D vector) {
         if (vector.getLength() != 0) {
-            setAngle(vector.getAngle2048());
+            setAngle(vector.getAngleDeg());
         } else {
             azimuthController.run();
         }
@@ -232,24 +232,21 @@ public class SwerveModule {
         }
     }
 
-    public void setAngle(double tickValue) { 
-        //512 ticks = 90deg, 1536ticks = 270deg
-        if (Math.abs(tickValue - this.prevAzimuthSetpoint) > 512 && Math.abs(tickValue - this.prevAzimuthSetpoint) < 1536) {
-            tickValue = (tickValue + 1024.0) % 2048.0;
+    public void setAngle(double degrees) { 
+        if (Math.abs(degrees - this.prevAzimuthSetpoint) > 90 && Math.abs(degrees - this.prevAzimuthSetpoint) < 270) {
+            degrees = (degrees + 180) % 360;
             azimuthReversed = true;
         } else {
             azimuthReversed = false;
         }
-        if (tickValue > this.prevAzimuthSetpoint && Math.abs(tickValue - this.prevAzimuthSetpoint) > 1024) {
+        if (degrees > this.prevAzimuthSetpoint && Math.abs(degrees - this.prevAzimuthSetpoint) > 180) {
             turns--;
-        } else if (tickValue < this.prevAzimuthSetpoint && Math.abs(tickValue - this.prevAzimuthSetpoint) > 1024) {
+        } else if (degrees < this.prevAzimuthSetpoint && Math.abs(degrees - this.prevAzimuthSetpoint) > 180) {
             turns++;
         }
-        this.azimuthController.setSetpoint(tickValue + turns * 2048.0);
-        //setAzimuthControllerDegree(degrees + turns * 360.0);
+        this.azimuthController.setSetpointDegrees(degrees + turns * 360.0);
         this.azimuthController.run();
-        //this.prevAzimuthSetpoint = getAzimuthControllerRatio(degrees + turns * 360.0, 360);
-        this.prevAzimuthSetpoint = tickValue + turns * 2048.0;
+        this.prevAzimuthSetpoint = degrees;
     }
 
     public void setPercentSpeed(double percent) {
@@ -273,7 +270,7 @@ public class SwerveModule {
         }
         if(!Constants.ZEROING) {
             //setAzimuthControllerRatio(this.azimuthEncoder.getRotationRaw(), 1024);
-            this.azimuthController.setSetpoint(this.azimuthEncoder.getRotation2048());
+            this.azimuthController.setSetpointDegrees(this.azimuthEncoder.getRotationDegrees());
         }
         this.turns = 0;
     }
@@ -282,8 +279,8 @@ public class SwerveModule {
         this.driveMotor.setSelectedSensorPosition(0.0, 0, Constants.kCanTimeoutMs);
     }
 
-    public void setAngleSimple(double tickValue) {
-        azimuthController.setSetpoint(tickValue);
+    public void setAngleSimple(double degrees) {
+        azimuthController.setSetpointDegrees(degrees);
         azimuthController.run();
     }
 
@@ -362,6 +359,9 @@ public class SwerveModule {
         return this.azimuthController.getSetpoint();
     }
 
+    /**
+     * @deprecated
+     */
     public void stopEncoder() {
         this.azimuthEncoder.closeEncoder();
     }

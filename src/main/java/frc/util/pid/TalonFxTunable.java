@@ -17,6 +17,8 @@ public class TalonFxTunable implements PIDTunable {
     private boolean testing;
     private ControlMode controlMode;
 
+    public static final double TICKS_PER_ROTATION = 2048.0;
+
     public TalonFxTunable(TalonFX talon, double kP, double kI, double kD, ControlMode controlMode) {
         // must pre config talon with PID 
         this(talon, new PIDFValue(kP, kI, kD, 0), controlMode);
@@ -118,12 +120,26 @@ public class TalonFxTunable implements PIDTunable {
         this.tuner = new PIDTuner(this, name);
     }
 
+    /**
+     * Sets the TalonFx to the raw setpoint
+     * 
+     * @param setpoint the setpoint the Talon pid will be set to (raw feedback sensor values including coefficent)
+     */
     @Override
     public void setSetpoint(double setpoint) {
         this.setpoint = setpoint;
         if(!testing) {
             talon.set(this.controlMode, setpoint);
         }
+    }
+
+    /**
+     * Sets the setpoint to a degree amount.
+     * 
+     * @param degrees the desired setpoint in degrees
+     */
+    public void setSetpointDegrees(double degrees) {
+        setSetpoint(degrees/360.0*TICKS_PER_ROTATION);
     }
 
     public void setSetpointWithFF(double setpoint, double ff) {
