@@ -9,7 +9,7 @@ import frc.util.pid.PIDValue;
 public class Constants {
     public static final int kCanTimeoutMs = 30;
 
-    public static final double SWERVE_AZIMUTH_TICKS_TO_DEEGREE = 360.0 / (2048 * 56.0 / 3.0);
+    public static final double SWERVE_AZIMUTH_TICKS_TO_DEGREE = 360.0 / (2048 * 56.0 / 3.0);
 
     public static final PIDValue FRONT_LEFT_AZIMUTH_PID = new PIDValue(28.5, 0.0, 1);
     public static final PIDValue FRONT_RIGHT_AZIMUTH_PID = new PIDValue(25.5, 0.0, 2);

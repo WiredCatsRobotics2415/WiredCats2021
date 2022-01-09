@@ -245,11 +245,4 @@ public class SwerveDrive {
         backLeftModule.printCurrent();
         backRightModule.printCurrent();
     }
-
-    public void startEncoder() {
-        this.frontLeftModule.startEncoder();
-    }
-    public void stopEncoder() {
-        this.frontLeftModule.stopEncoder();
-    }
 }
