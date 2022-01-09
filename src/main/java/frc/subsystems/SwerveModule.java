@@ -107,7 +107,7 @@ public class SwerveModule {
 
         this.zeroEncoder();
 
-        this.prevAzimuthSetpoint = this.azimuthEncoder.getRotation2048();
+        this.prevAzimuthSetpoint = this.azimuthEncoder.getRotationDegrees();
         this.turns = 0;
 
         this.logger = null;
