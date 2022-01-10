@@ -59,7 +59,7 @@ public class SwerveModule {
                 Constants.kCanTimeoutMs);
 
         this.azimuthMotor.configSelectedFeedbackCoefficient(Constants.SWERVE_AZIMUTH_GEAR_RATIO, 0, Constants.kCanTimeoutMs);
-
+        this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048());
         this.driveMotor.setNeutralMode(Constants.DRIVE_BREAK_MODE);
         if(Constants.ZEROING) {
             this.azimuthMotor.setNeutralMode(NeutralMode.Coast);
@@ -261,16 +261,18 @@ public class SwerveModule {
 
     public void zeroEncoder() {
         this.azimuthMotor.set(ControlMode.PercentOutput, 0.0);
-        ErrorCode error = this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0,
-                Constants.kCanTimeoutMs);
-        if (!error.equals(ErrorCode.OK)) {
-            System.out.println("failed zero");
-            error = this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0,
-                    Constants.kCanTimeoutMs);
+        ErrorCode error = this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, 10000);
+        if (Math.abs(this.azimuthMotor.getSelectedSensorPosition() - this.azimuthEncoder.getRotation2048()) > 5) {
+            double newval = 0;
+            if (this.azimuthMotor.getSelectedSensorPosition() < 0) newval = 0 - (-2048 + this.azimuthEncoder.getRotation2048());
+            this.azimuthMotor.setSelectedSensorPosition(newval);
+        }
+        if (error != ErrorCode.OK) {
+            System.out.println("test");
         }
         if(!Constants.ZEROING) {
             //setAzimuthControllerRatio(this.azimuthEncoder.getRotationRaw(), 1024);
-            this.azimuthController.setSetpointDegrees(this.azimuthEncoder.getRotationDegrees());
+            this.azimuthController.setSetpoint(this.azimuthEncoder.getRotation2048());
         }
         this.turns = 0;
     }
@@ -346,13 +348,12 @@ public class SwerveModule {
 
     public void printAzimuthTalonEncoderValue() {
         System.out.println("TalonFx " + this.name.toString() + " Value:"
-                + this.azimuthMotor.getSelectedSensorPosition(0) + "ticks which is "
                 + this.azimuthMotor.getSelectedSensorPosition(0) % 360 + "degrees");
     }
 
     public void printAzimuthEncoderValue() {
         System.out.println("MA3 " + this.name.toString() + " Value:"
-                + this.azimuthEncoder.getRotation2048() + "ticks");
+                + this.azimuthEncoder.getRotationDegrees() + "degrees");
     }
     
     public double getAzimuthSetpoint() {

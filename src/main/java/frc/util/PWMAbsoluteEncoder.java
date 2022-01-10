@@ -119,9 +119,6 @@ public class PWMAbsoluteEncoder {
         return getRotationPercent() * 360.0;
     }
 
-    /**
-     * @deprecated
-     */
     public double getRotation2048() {
         return getRotationPercent() * 2048.0;
     }
