@@ -33,6 +33,10 @@ public class Vector2D {
         return Math.toDegrees(radians);
     }
 
+    public double getAngle2048() { // [0, 2048)
+        return (Math.toDegrees(radians) / 360.0) * 2048.0;
+    }
+
     public double getX() {
         return length * Math.cos(radians);
     }

@@ -50,15 +50,17 @@ public class SwerveModule {
                 azimuthEncoderReversed);
 
         this.driveMotor.configFactoryDefault(Constants.kCanTimeoutMs);
-        this.driveMotor.configFactoryDefault(Constants.kCanTimeoutMs);
+        this.azimuthMotor.configFactoryDefault(Constants.kCanTimeoutMs);
         // Missing current limit
         this.driveMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
                 Constants.kCanTimeoutMs);
         this.driveMotor.setSelectedSensorPosition(0, 0, Constants.kCanTimeoutMs);
+
+        this.azimuthMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero, Constants.kCanTimeoutMs);
         this.azimuthMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
                 Constants.kCanTimeoutMs);
-
-        this.azimuthMotor.configSelectedFeedbackCoefficient(360.0 / (2048 * 56.0 / 3.0), 0, Constants.kCanTimeoutMs);
+        this.azimuthMotor.configSelectedFeedbackCoefficient(Constants.SWERVE_AZIMUTH_GEAR_RATIO, 0, Constants.kCanTimeoutMs);
+        this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, 10);
 
         this.driveMotor.setNeutralMode(Constants.DRIVE_BREAK_MODE);
         if(Constants.ZEROING) {
@@ -92,8 +94,6 @@ public class SwerveModule {
 
         this.azimuthMotor.configAllowableClosedloopError(0, 4.0, Constants.kCanTimeoutMs);
 
-        this.azimuthMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero,
-                Constants.kCanTimeoutMs);
 
         this.positionX = positionX;
         this.positionY = positionY;
@@ -128,7 +128,7 @@ public class SwerveModule {
         }
         this.name = name;
     }
-
+/*
     public SwerveModule(boolean testing, int driveMotorID, int azimuthMotorID, boolean azimuthRev, int azimuthEncoderChannel,
     double positionX, double positionY, PIDValue pidValues, double azimuthEncoderOffset,
     boolean azimuthEncoderReversed, PIDFValue drivePIDF) {
@@ -179,8 +179,10 @@ public class SwerveModule {
             this.azimuthController = new TalonFxTunable(this.azimuthMotor, pidValues, ControlMode.Position);
             this.driveController = new TalonFxTunable(this.driveMotor, drivePIDF, ControlMode.Velocity);
 
-            this.azimuthController.setSetpoint(this.azimuthEncoder.getRotationDegrees());
-            this.prevAzimuthSetpoint = this.azimuthEncoder.getRotationDegrees();
+            //this.azimuthController.setSetpoint(this.azimuthEncoder.getRotationDegrees());
+            //setAzimuthControllerDegree(this.azimuthEncoder.getRotationDegrees());
+            setAzimuthControllerRatio(this.azimuthEncoder.getRotationRaw(), 1024);
+            this.prevAzimuthSetpoint = this.azimuthEncoder.getRotationRaw();
             this.turns = 0;
             this.testing = false;
         } else {
@@ -200,6 +202,7 @@ public class SwerveModule {
             this.turns = 0;
         }
     }
+    */
 
     public void setVector(Vector2D vector) {
         if (vector.getLength() != 0) {
@@ -241,7 +244,9 @@ public class SwerveModule {
         } else if (degrees < this.prevAzimuthSetpoint && Math.abs(degrees - this.prevAzimuthSetpoint) > 180) {
             turns++;
         }
-        this.azimuthController.setSetpoint(degrees + turns * 360.0);
+        //could be interesting - this would be an auto zero
+        this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048());
+        this.azimuthController.setSetpointDegrees(degrees + turns * 360.0);
         this.azimuthController.run();
         this.prevAzimuthSetpoint = degrees;
     }
@@ -258,15 +263,14 @@ public class SwerveModule {
 
     public void zeroEncoder() {
         this.azimuthMotor.set(ControlMode.PercentOutput, 0.0);
-        ErrorCode error = this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotationDegrees(), 0,
-                Constants.kCanTimeoutMs);
-        if (!error.equals(ErrorCode.OK)) {
-            System.out.println("failed zero");
-            error = this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotationDegrees(), 0,
-                    Constants.kCanTimeoutMs);
-        }
+        this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, 10);
+        if (Math.abs(this.azimuthMotor.getSelectedSensorPosition() - this.azimuthEncoder.getRotation2048()) > 5) {
+            //something is very wrong
+            this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, 30);
+        } 
+        //sometimes this doesn't work. e.g.: encoder says 1875, sensor says -1420, then after this it says a garbage negative that isn't 1875. not sure how to fix
         if(!Constants.ZEROING) {
-            this.azimuthController.setSetpoint(this.azimuthEncoder.getRotationDegrees());
+            this.azimuthController.setSetpoint(this.azimuthEncoder.getRotation2048());
         }
         this.turns = 0;
     }
@@ -276,7 +280,7 @@ public class SwerveModule {
     }
 
     public void setAngleSimple(double degrees) {
-        azimuthController.setSetpoint(degrees);
+        azimuthController.setSetpointDegrees(degrees);
         azimuthController.run();
     }
 
@@ -342,24 +346,16 @@ public class SwerveModule {
 
     public void printAzimuthTalonEncoderValue() {
         System.out.println("TalonFx " + this.name.toString() + " Value:"
-                + this.azimuthMotor.getSelectedSensorPosition(0) + " : "
-                + this.azimuthMotor.getSelectedSensorPosition(0) % 360);
+                + this.azimuthMotor.getSelectedSensorPosition(0) % 360 + "degrees");
     }
 
     public void printAzimuthEncoderValue() {
         System.out.println("MA3 " + this.name.toString() + " Value:"
-                + this.azimuthEncoder.getRotationDegrees());
+                + this.azimuthEncoder.getRotationDegrees() + "degrees");
     }
     
     public double getAzimuthSetpoint() {
         return this.azimuthController.getSetpoint();
     }
 
-    public void stopEncoder() {
-        this.azimuthEncoder.closeEncoder();
-    }
-
-    public void startEncoder() {
-        this.azimuthEncoder.openEncoder();
-    }
 }

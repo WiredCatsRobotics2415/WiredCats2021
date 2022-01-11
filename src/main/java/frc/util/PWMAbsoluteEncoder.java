@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Counter.Mode;
 
 public class PWMAbsoluteEncoder {
-    private static final int COUNTS_PER_ROTATION = 1024;
+    private static final double COUNTS_PER_ROTATION = 1024;
 
     private double offset;
     private final DigitalInput encoderInput;
@@ -85,14 +85,14 @@ public class PWMAbsoluteEncoder {
     public double getRotationRaw() { // out of 1024 for 10 bit PWM
         double timeOn, timeOff;
         if(!testing) {
-            timeOn = encoderRawInputUp.getPeriod() * 1000000; // get time in seconds and convert to microseconds
-            timeOff = encoderRawInputDown.getPeriod() * 1000000;
+            timeOn = encoderRawInputUp.getPeriod() * 1000000.0; // get time in seconds and convert to microseconds
+            timeOff = encoderRawInputDown.getPeriod() * 1000000.0;
         } else {
             timeOn = 0;
             timeOff = 1024;
         }
         //could potentially set timeOn + timeOff to 1026 - test this
-        double x = ((timeOn * 1026) / (timeOn + timeOff)) - 1;
+        double x = ((timeOn * 1026.0) / (timeOn + timeOff)) - 1;
         double returnValue = 0;
         if (x <= 1023)
             returnValue = x;
@@ -116,6 +116,10 @@ public class PWMAbsoluteEncoder {
     }
 
     public double getRotationDegrees() {
-        return getRotationPercent() * 360;
+        return getRotationPercent() * 360.0;
+    }
+
+    public double getRotation2048() {
+        return getRotationPercent() * 2048.0;
     }
 }
