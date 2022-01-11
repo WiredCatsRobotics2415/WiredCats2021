@@ -262,14 +262,7 @@ public class SwerveModule {
     public void zeroEncoder() {
         this.azimuthMotor.set(ControlMode.PercentOutput, 0.0);
         ErrorCode error = this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, 10000);
-        if (Math.abs(this.azimuthMotor.getSelectedSensorPosition() - this.azimuthEncoder.getRotation2048()) > 5) {
-            double newval = 0;
-            if (this.azimuthMotor.getSelectedSensorPosition() < 0) newval = 0 - (-2048 + this.azimuthEncoder.getRotation2048());
-            this.azimuthMotor.setSelectedSensorPosition(newval);
-        }
-        if (error != ErrorCode.OK) {
-            System.out.println("test");
-        }
+        //sometimes this doesn't work. e.g.: encoder says 1875, sensor says -1420, then after this it says a garbage negative that isn't 1875. not sure how to fix
         if(!Constants.ZEROING) {
             //setAzimuthControllerRatio(this.azimuthEncoder.getRotationRaw(), 1024);
             this.azimuthController.setSetpoint(this.azimuthEncoder.getRotation2048());
