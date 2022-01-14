@@ -39,6 +39,7 @@ public class SwerveModule {
     public boolean azimuthReversed;
     private Constants.SwerveModuleName name;
     private boolean testing;
+    private double lastZeroTime;
 
     public SwerveModule(int driveMotorID, int azimuthMotorID, boolean azimuthRev, int azimuthEncoderChannel,
             double positionX, double positionY, PIDValue azimuthPidValues, double azimuthEncoderOffset,
@@ -60,7 +61,7 @@ public class SwerveModule {
         this.azimuthMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
                 Constants.kCanTimeoutMs);
         this.azimuthMotor.configSelectedFeedbackCoefficient(Constants.SWERVE_AZIMUTH_GEAR_RATIO, 0, Constants.kCanTimeoutMs);
-        this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, 10);
+        this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, 30);
 
         this.driveMotor.setNeutralMode(Constants.DRIVE_BREAK_MODE);
         if(Constants.ZEROING) {
@@ -245,7 +246,15 @@ public class SwerveModule {
             turns++;
         }
         //could be interesting - this would be an auto zero
-        this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048());
+        /*
+        if (Math.abs(this.azimuthMotor.getSelectedSensorPosition() - this.azimuthEncoder.getRotation2048()) > 10) {
+            if (lastZeroTime != 0) lastZeroTime = System.currentTimeMillis();
+            else if (Math.abs(lastZeroTime - System.currentTimeMillis()) > 10000) {
+                this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, 50);
+                lastZeroTime = 0;
+            }
+        } 
+        */
         this.azimuthController.setSetpointDegrees(degrees + turns * 360.0);
         this.azimuthController.run();
         this.prevAzimuthSetpoint = degrees;
@@ -263,10 +272,10 @@ public class SwerveModule {
 
     public void zeroEncoder() {
         this.azimuthMotor.set(ControlMode.PercentOutput, 0.0);
-        this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, 10);
+        this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, 30);
         if (Math.abs(this.azimuthMotor.getSelectedSensorPosition() - this.azimuthEncoder.getRotation2048()) > 5) {
             //something is very wrong
-            this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, 30);
+            this.azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, 50);
         } 
         //sometimes this doesn't work. e.g.: encoder says 1875, sensor says -1420, then after this it says a garbage negative that isn't 1875. not sure how to fix
         if(!Constants.ZEROING) {
