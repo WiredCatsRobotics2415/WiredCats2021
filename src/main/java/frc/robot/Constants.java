@@ -19,11 +19,13 @@ public class Constants {
     public static final PIDValue FRONT_RIGHT_AZIMUTH_PID = new PIDValue(9, 0.0, 0.4);
     public static final PIDValue BACK_LEFT_AZIMUTH_PID = new PIDValue(9, 0.0, 0.4);
     public static final PIDValue BACK_RIGHT_AZIMUTH_PID = new PIDValue(9, 0.0, 0.4);
+    public static final PIDValue[] AZIMUTH_PID_VALUES = {FRONT_LEFT_AZIMUTH_PID, FRONT_RIGHT_AZIMUTH_PID, BACK_LEFT_AZIMUTH_PID, BACK_RIGHT_AZIMUTH_PID};
 
     public static final PIDFValue FRONT_LEFT_VEL_DRIVE_PIDF = new PIDFValue(0.00, 0.0, 0.0, 0.0);
     public static final PIDFValue FRONT_RIGHT_VEL_DRIVE_PIDF = new PIDFValue(0.00, 0.0, 0.0, 0.0);
     public static final PIDFValue BACK_LEFT_VEL_DRIVE_PIDF = new PIDFValue(0.00, 0.0, 0.0, 0.0);
     public static final PIDFValue BACK_RIGHT_VEL_DRIVE_PIDF = new PIDFValue(0.00, 0.0, 0.0, 0.0);
+    public static final PIDFValue[] DRIVE_PIDF_VALUES = {FRONT_LEFT_VEL_DRIVE_PIDF, FRONT_RIGHT_VEL_DRIVE_PIDF, BACK_LEFT_VEL_DRIVE_PIDF, BACK_RIGHT_VEL_DRIVE_PIDF};
 
     public static final PIDValue DRIVE_DISTANCE_PID = new PIDValue(8, 0.0, 0.0);
     public static final PIDValue TURNING_PID = new PIDValue(1.0,0.0,0.0);
@@ -38,6 +40,7 @@ public class Constants {
     public static final double FRONT_RIGHT_AZIMUTH_ENCODER_OFFSET = 8.8-90;//322-90;//318.9-90;//-50.2;//318.9-90;//72.75+180.0;//163.28 + 180;// 165.24-180;//146.5+180;//5.976+180;
     public static final double BACK_LEFT_AZIMUTH_ENCODER_OFFSET = 286.2+90;//285.5+90;//288.6+90;//-74.5;//288.6+90;//218;// 219.7;
     public static final double BACK_RIGHT_AZIMUTH_ENCODER_OFFSET = 235.9-90;//238.4-90;//220-90;//-126.2;//220-90;//212.35;//214.1-4;//211 + 2;// 211.6;
+    public static final double[] ENCODER_OFFSETS = {FRONT_LEFT_AZIMUTH_ENCODER_OFFSET, FRONT_RIGHT_AZIMUTH_ENCODER_OFFSET, BACK_LEFT_AZIMUTH_ENCODER_OFFSET, BACK_RIGHT_AZIMUTH_ENCODER_OFFSET};
     
     public static final double MOTORMIN = 0.05;
     public static final double DEADBAND = 0.2;

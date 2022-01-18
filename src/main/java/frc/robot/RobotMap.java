@@ -6,26 +6,31 @@ public class RobotMap {
     public static final int FRONT_RIGHT_SWERVE_AZIMUTH = 20;
     public static final int BACK_LEFT_SWERVE_AZIMUTH = 21;
     public static final int BACK_RIGHT_SWERVE_AZIMUTH = 23;
+    public static final int[] AZIMUTH_PORTS = {FRONT_LEFT_SWERVE_AZIMUTH, FRONT_RIGHT_SWERVE_AZIMUTH, BACK_LEFT_SWERVE_AZIMUTH, BACK_RIGHT_SWERVE_AZIMUTH};
 
     public static final boolean FRONT_LEFT_SWERVE_AZIMUTH_REV = true;
     public static final boolean FRONT_RIGHT_SWERVE_AZIMUTH_REV = true;
     public static final boolean BACK_LEFT_SWERVE_AZIMUTH_REV = true;
     public static final boolean BACK_RIGHT_SWERVE_AZIMUTH_REV = true;
+    public static final boolean[] AZIMUTH_REVERSED = {FRONT_LEFT_SWERVE_AZIMUTH_REV, FRONT_RIGHT_SWERVE_AZIMUTH_REV, BACK_LEFT_SWERVE_AZIMUTH_REV, BACK_RIGHT_SWERVE_AZIMUTH_REV};
 
     public static final int FRONT_LEFT_SWERVE_DRIVE = 22;
     public static final int FRONT_RIGHT_SWERVE_DRIVE = 35;
     public static final int BACK_LEFT_SWERVE_DRIVE = 34;
     public static final int BACK_RIGHT_SWERVE_DRIVE = 33;
+    public static final int[] DRIVE_PORTS = {FRONT_LEFT_SWERVE_DRIVE, FRONT_RIGHT_SWERVE_DRIVE, BACK_LEFT_SWERVE_DRIVE, BACK_RIGHT_SWERVE_DRIVE}
 
     public static final int FRONT_LEFT_AZIMUTH_ENCODER = 2;
     public static final int FRONT_RIGHT_AZIMUTH_ENCODER = 3;
     public static final int BACK_LEFT_AZIMUTH_ENCODER = 0;
     public static final int BACK_RIGHT_AZIMUTH_ENCODER = 1;
+    public static final int[] AZIMUTH_ENCODER_PORTS = {FRONT_LEFT_AZIMUTH_ENCODER, FRONT_RIGHT_AZIMUTH_ENCODER, BACK_LEFT_AZIMUTH_ENCODER, BACK_RIGHT_AZIMUTH_ENCODER};
 
     public static final boolean FRONT_LEFT_AZIMUTH_ENCODER_REV = true;
     public static final boolean FRONT_RIGHT_AZIMUTH_ENCODER_REV = true;
     public static final boolean BACK_LEFT_AZIMUTH_ENCODER_REV = true;
     public static final boolean BACK_RIGHT_AZIMUTH_ENCODER_REV = true;
+    public static final boolean[] AZIMUTH_ENCODER_REV = {FRONT_LEFT_AZIMUTH_ENCODER_REV, FRONT_RIGHT_AZIMUTH_ENCODER_REV, BACK_LEFT_AZIMUTH_ENCODER_REV, BACK_RIGHT_AZIMUTH_ENCODER_REV};
 
     public static final double FRONT_LEFT_MODULE_X = -29.46/2.0, FRONT_LEFT_MODULE_Y = 29.46/2.0; // inches
     public static final double FRONT_RIGHT_MODULE_X = 29.46/2.0, FRONT_RIGHT_MODULE_Y = 29.46/2.0; // quick values for sqare robot
