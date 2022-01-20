@@ -65,4 +65,12 @@ public class Constants {
 
     //if true then the navX and rio are facing up relative to the field
     public static final boolean NAVX_FACING_UP = false;
+
+    public static double degreesToFalcon(double degrees) {
+        return (degrees / 360.0) * 2048.0;
+    }
+
+    public static double MPSToFalcon(double mps) {
+        return 
+    }
 }

@@ -1,11 +1,13 @@
 package frc.subsystems.newswerve;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import frc.robot.Constants;
@@ -21,6 +23,8 @@ public class SwerveModule {
     private PWMAbsoluteEncoder azimuthEncoder;
     private double lastAngle;
     private Constants.SwerveModuleName name;
+
+    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.KS, Constants.KV, Constants.KA); 
 
     public SwerveModule(Constants.SwerveModuleName name) {
         this.driveMotor = new TalonFX(RobotMap.DRIVE_PORTS[name.ordinal()]);
@@ -48,6 +52,35 @@ public class SwerveModule {
         driveMotor.config_kF(0, pidf.getKF(), Constants.kCanTimeoutMs); 
     }
 
+    public static SwerveModuleState optimize(SwerveModuleState state, Rotation2d currentAngle) {
+        double speed = state.speedMetersPerSecond;
+        double targetAngle = state.angle.getDegrees();
+        if (Math.floor(currentAngle.getDegrees() / 360.0) != 0) {
+            //always positive modulus function = (a % b + b) % b
+            //taking the angle in [0, 360) then adding the number of full rotations * 360
+            targetAngle = ((state.angle.getDegrees() % 360 + 360) % 360) + Math.floor(currentAngle.getDegrees() / 360.0) * 360.0;
+        }
+        double delta = targetAngle - currentAngle.getDegrees();
+        if (Math.abs(delta) > 90) {
+            speed *= -1; 
+            if (delta > 0) {
+                targetAngle -= 180;
+            } else {
+                targetAngle += 180;
+            }
+        }
+        return new SwerveModuleState(speed, Rotation2d.fromDegrees(targetAngle)); 
+    }
+
+    public void setNewState(SwerveModuleState newState, boolean openLoop) {
+        newState = optimize(newState, Rotation2d.fromDegrees(getState().angle));
+        if (openLoop) driveMotor.set(ControlMode.PercentOutput, newState.speedMetersPerSecond / Constants.MAX_SWERVE_SPEED);
+        //Module jitter deadband
+        double angle = (Math.abs(newState.speedMetersPerSecond) <= (Constants.MAX_SWERVE_SPEED * 0.1)) ? lastAngle : newState.angle.getDegrees();
+        azimuthMotor.set(ControlMode.Position, Constants.degreesToFalcon(angle));
+        lastAngle = angle;
+    }
+
     private void configAzimuthMotor(PIDValue pid) {
         azimuthMotor.configFactoryDefault(Constants.kCanTimeoutMs);
         azimuthMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kCanTimeoutMs);
@@ -70,6 +103,16 @@ public class SwerveModule {
 
     public Rotation2d getEncoderAngle() {
         return Rotation2d.fromDegrees(azimuthEncoder.getRotationDegrees());
+    }
+
+    public void printTalonEncoder() {
+        System.out.println("TalonFx " + this.name.toString() + " Value:"
+                + this.azimuthMotor.getSelectedSensorPosition(0) % 360 + "degrees");
+    }
+
+    public void printAzimuthEncoder() {
+        System.out.println("MA3 " + this.name.toString() + " Value:"
+                + this.azimuthEncoder.getRotationDegrees() + "degrees");
     }
     
 }
