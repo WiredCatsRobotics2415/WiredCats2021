@@ -255,6 +255,7 @@ public class SwerveModule {
             }
         } 
         */
+        //if (Math.abs(this.prevAzimuthSetpoint - degrees) < 2) degrees = this.prevAzimuthSetpoint;
         this.azimuthController.setSetpointDegrees(degrees + turns * 360.0);
         this.azimuthController.run();
         this.prevAzimuthSetpoint = degrees;
