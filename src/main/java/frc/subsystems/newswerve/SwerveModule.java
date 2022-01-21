@@ -1,6 +1,7 @@
 package frc.subsystems.newswerve;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -24,7 +25,7 @@ public class SwerveModule {
     private double lastAngle;
     private Constants.SwerveModuleName name;
 
-    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.KS, Constants.KV, Constants.KA); 
+    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.KS, Constants.KV, Constants.KA);
 
     public SwerveModule(Constants.SwerveModuleName name) {
         this.driveMotor = new TalonFX(RobotMap.DRIVE_PORTS[name.ordinal()]);
@@ -39,7 +40,8 @@ public class SwerveModule {
     private void configDriveMotor(PIDFValue pidf) {
         driveMotor.configFactoryDefault(Constants.kCanTimeoutMs);
         driveMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kCanTimeoutMs);
-        driveMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero, Constants.kCanTimeoutMs);
+        driveMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero,
+                Constants.kCanTimeoutMs);
         driveMotor.setSelectedSensorPosition(0, 0, Constants.kCanTimeoutMs);
         driveMotor.setNeutralMode(Constants.DRIVE_BREAK_MODE);
         driveMotor.setInverted(false);
@@ -49,34 +51,40 @@ public class SwerveModule {
         driveMotor.config_kP(0, pidf.getKP(), Constants.kCanTimeoutMs);
         driveMotor.config_kI(0, pidf.getKI(), Constants.kCanTimeoutMs);
         driveMotor.config_kD(0, pidf.getKD(), Constants.kCanTimeoutMs);
-        driveMotor.config_kF(0, pidf.getKF(), Constants.kCanTimeoutMs); 
+        driveMotor.config_kF(0, pidf.getKF(), Constants.kCanTimeoutMs);
     }
 
     public static SwerveModuleState optimize(SwerveModuleState state, Rotation2d currentAngle) {
         double speed = state.speedMetersPerSecond;
         double targetAngle = state.angle.getDegrees();
         if (Math.floor(currentAngle.getDegrees() / 360.0) != 0) {
-            //always positive modulus function = (a % b + b) % b
-            //taking the angle in [0, 360) then adding the number of full rotations * 360
-            targetAngle = ((state.angle.getDegrees() % 360 + 360) % 360) + Math.floor(currentAngle.getDegrees() / 360.0) * 360.0;
+            // always positive modulus function = (a % b + b) % b
+            // taking the angle in [0, 360) then adding the number of full rotations * 360
+            targetAngle = ((state.angle.getDegrees() % 360 + 360) % 360)
+                    + Math.floor(currentAngle.getDegrees() / 360.0) * 360.0;
         }
         double delta = targetAngle - currentAngle.getDegrees();
         if (Math.abs(delta) > 90) {
-            speed *= -1; 
+            speed *= -1;
             if (delta > 0) {
                 targetAngle -= 180;
             } else {
                 targetAngle += 180;
             }
         }
-        return new SwerveModuleState(speed, Rotation2d.fromDegrees(targetAngle)); 
+        return new SwerveModuleState(speed, Rotation2d.fromDegrees(targetAngle));
     }
 
     public void setNewState(SwerveModuleState newState, boolean openLoop) {
-        newState = optimize(newState, Rotation2d.fromDegrees(getState().angle));
-        if (openLoop) driveMotor.set(ControlMode.PercentOutput, newState.speedMetersPerSecond / Constants.MAX_SWERVE_SPEED);
-        //Module jitter deadband
-        double angle = (Math.abs(newState.speedMetersPerSecond) <= (Constants.MAX_SWERVE_SPEED * 0.1)) ? lastAngle : newState.angle.getDegrees();
+        newState = optimize(newState, getState().angle);
+        if (openLoop)
+            driveMotor.set(ControlMode.PercentOutput, newState.speedMetersPerSecond / Constants.MAX_SWERVE_SPEED);
+        else
+            driveMotor.set(ControlMode.Velocity, Constants.MPSToFalcon(newState.speedMetersPerSecond),
+                    DemandType.ArbitraryFeedForward, feedforward.calculate(newState.speedMetersPerSecond));
+        // Module jitter deadband
+        double angle = (Math.abs(newState.speedMetersPerSecond) <= (Constants.MAX_SWERVE_SPEED * 0.1)) ? lastAngle
+                : newState.angle.getDegrees();
         azimuthMotor.set(ControlMode.Position, Constants.degreesToFalcon(angle));
         lastAngle = angle;
     }
@@ -84,10 +92,13 @@ public class SwerveModule {
     private void configAzimuthMotor(PIDValue pid) {
         azimuthMotor.configFactoryDefault(Constants.kCanTimeoutMs);
         azimuthMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kCanTimeoutMs);
-        azimuthMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero, Constants.kCanTimeoutMs);
+        azimuthMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero,
+                Constants.kCanTimeoutMs);
         azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, Constants.kCanTimeoutMs);
-        if(Constants.ZEROING) azimuthMotor.setNeutralMode(NeutralMode.Coast);
-        else azimuthMotor.setNeutralMode(NeutralMode.Brake);
+        if (Constants.ZEROING)
+            azimuthMotor.setNeutralMode(NeutralMode.Coast);
+        else
+            azimuthMotor.setNeutralMode(NeutralMode.Brake);
         azimuthMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 25, 40, 0.1));
         azimuthMotor.config_kP(0, pid.getKP(), Constants.kCanTimeoutMs);
         azimuthMotor.config_kI(0, pid.getKI(), Constants.kCanTimeoutMs);
@@ -99,6 +110,9 @@ public class SwerveModule {
     }
 
     public SwerveModuleState getState() {
+        double velocity = Constants.falconToMPS(driveMotor.getSelectedSensorVelocity(0));
+        Rotation2d angle = Rotation2d.fromDegrees(Constants.falconToDegrees(azimuthMotor.getSelectedSensorPosition(0)));
+        return new SwerveModuleState(velocity, angle);
     }
 
     public Rotation2d getEncoderAngle() {
@@ -114,5 +128,5 @@ public class SwerveModule {
         System.out.println("MA3 " + this.name.toString() + " Value:"
                 + this.azimuthEncoder.getRotationDegrees() + "degrees");
     }
-    
+
 }

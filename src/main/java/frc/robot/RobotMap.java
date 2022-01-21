@@ -18,7 +18,7 @@ public class RobotMap {
     public static final int FRONT_RIGHT_SWERVE_DRIVE = 35;
     public static final int BACK_LEFT_SWERVE_DRIVE = 34;
     public static final int BACK_RIGHT_SWERVE_DRIVE = 33;
-    public static final int[] DRIVE_PORTS = {FRONT_LEFT_SWERVE_DRIVE, FRONT_RIGHT_SWERVE_DRIVE, BACK_LEFT_SWERVE_DRIVE, BACK_RIGHT_SWERVE_DRIVE}
+    public static final int[] DRIVE_PORTS = {FRONT_LEFT_SWERVE_DRIVE, FRONT_RIGHT_SWERVE_DRIVE, BACK_LEFT_SWERVE_DRIVE, BACK_RIGHT_SWERVE_DRIVE};
 
     public static final int FRONT_LEFT_AZIMUTH_ENCODER = 2;
     public static final int FRONT_RIGHT_AZIMUTH_ENCODER = 3;

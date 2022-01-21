@@ -2,6 +2,9 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.wpilibj.util.Units;
 import frc.util.logging.SwerveModuleLogger.SwerveModuleLoggerMode;
 import frc.util.pid.PIDFValue;
 import frc.util.pid.PIDValue;
@@ -13,7 +16,17 @@ public class Constants {
      * @deprecated
      */
     public static final double SWERVE_AZIMUTH_TICKS_TO_DEGREE = 360.0 / (2048 * 56.0 / 3.0);
-    public static final double SWERVE_AZIMUTH_GEAR_RATIO = 2048.0 / 40320.0;
+    public static final double SWERVE_AZIMUTH_GEAR_RATIO = 56.0 / 3.0;
+    public static final double SWERVE_DRIVE_GEAR_RATIO = (28.0/11.0) * 3.0;
+    public static final double SWERVE_WHEEL_CIRCUMFERENCE = Math.PI * Units.inchesToMeters(3.4);
+    public static final double SWERVE_LEFTRIGHT_DISTANCE = Units.inchesToMeters(25.0);
+    public static final double SWERVE_FRONTBACK_DISTANCE = Units.inchesToMeters(24.75);
+
+    public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
+        new Translation2d(SWERVE_FRONTBACK_DISTANCE / 2.0, SWERVE_LEFTRIGHT_DISTANCE / 2.0),
+        new Translation2d(SWERVE_FRONTBACK_DISTANCE / 2.0, -SWERVE_LEFTRIGHT_DISTANCE / 2.0),
+        new Translation2d(-SWERVE_FRONTBACK_DISTANCE / 2.0, SWERVE_LEFTRIGHT_DISTANCE / 2.0),
+        new Translation2d(-SWERVE_FRONTBACK_DISTANCE / 2.0, -SWERVE_LEFTRIGHT_DISTANCE / 2.0));
 
     public static final PIDValue FRONT_LEFT_AZIMUTH_PID = new PIDValue(9, 0.0, 0.4);
     public static final PIDValue FRONT_RIGHT_AZIMUTH_PID = new PIDValue(9, 0.0, 0.4);
@@ -66,11 +79,28 @@ public class Constants {
     //if true then the navX and rio are facing up relative to the field
     public static final boolean NAVX_FACING_UP = false;
 
+    public static final double MAX_SWERVE_SPEED = 4.5;
+
     public static double degreesToFalcon(double degrees) {
-        return (degrees / 360.0) * 2048.0;
+        return degrees / (360.0 / (SWERVE_AZIMUTH_GEAR_RATIO * 2048.0));
+    }
+    
+    public static double falconToDegrees(double ticks) {
+        return ticks * (360.0 / (SWERVE_AZIMUTH_GEAR_RATIO * 2048.0));
+    }
+    public static double falconToRPM(double velocityCounts) {
+        return (velocityCounts * (600.0 / 2048.0)) / SWERVE_DRIVE_GEAR_RATIO;
     }
 
-    public static double MPSToFalcon(double mps) {
-        return 
+    public static double RPMToFalcon(double RPM) {
+        return (RPM * SWERVE_DRIVE_GEAR_RATIO) * (2048.0 / 600.0);
+    }
+
+    public static double falconToMPS(double velocitycounts){
+        return (falconToRPM(velocitycounts) * SWERVE_WHEEL_CIRCUMFERENCE) / 60.0;
+    }
+
+    public static double MPSToFalcon(double velocity){
+        return RPMToFalcon((velocity * 60) / SWERVE_WHEEL_CIRCUMFERENCE);
     }
 }
