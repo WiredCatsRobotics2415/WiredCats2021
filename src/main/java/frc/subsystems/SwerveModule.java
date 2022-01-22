@@ -28,12 +28,12 @@ public class SwerveModule {
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.KS, Constants.KV, Constants.KA);
 
     public SwerveModule(Constants.SwerveModuleName name) {
+        this.name = name;
         this.driveMotor = new TalonFX(RobotMap.DRIVE_PORTS[name.ordinal()]);
-        this.azimuthMotor = new TalonFX(RobotMap.AZIMUTH_ENCODER_PORTS[name.ordinal()]);
-        this.azimuthEncoder = new PWMAbsoluteEncoder(RobotMap.AZIMUTH_ENCODER_PORTS[name.ordinal()]);
+        this.azimuthMotor = new TalonFX(RobotMap.AZIMUTH_PORTS[name.ordinal()]);
+        this.azimuthEncoder = new PWMAbsoluteEncoder(RobotMap.AZIMUTH_ENCODER_PORTS[name.ordinal()], Constants.ENCODER_OFFSETS[name.ordinal()], RobotMap.AZIMUTH_ENCODER_REV[name.ordinal()]);
         configDriveMotor(Constants.DRIVE_PIDF_VALUES[name.ordinal()]);
         configAzimuthMotor(Constants.AZIMUTH_PID_VALUES[name.ordinal()]);
-        this.azimuthEncoder.setOffset(Constants.ENCODER_OFFSETS[name.ordinal()]);
         this.lastAngle = azimuthEncoder.getRotationDegrees();
     }
 
@@ -79,7 +79,7 @@ public class SwerveModule {
                 Constants.kCanTimeoutMs);
         driveMotor.setSelectedSensorPosition(0, 0, Constants.kCanTimeoutMs);
         driveMotor.setNeutralMode(Constants.DRIVE_BREAK_MODE);
-        driveMotor.setInverted(false);
+        driveMotor.setInverted(RobotMap.DRIVE_REVERSED[name.ordinal()]);
         driveMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 60, 0.1));
         driveMotor.configOpenloopRamp(0.25, Constants.kCanTimeoutMs);
         driveMotor.configClosedloopRamp(0.0, Constants.kCanTimeoutMs);
@@ -94,8 +94,9 @@ public class SwerveModule {
         azimuthMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kCanTimeoutMs);
         azimuthMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero,
                 Constants.kCanTimeoutMs);
-        azimuthMotor.setSelectedSensorPosition(this.azimuthEncoder.getRotation2048(), 0, Constants.kCanTimeoutMs);
+        azimuthMotor.setSelectedSensorPosition(Constants.degreesToFalcon(this.azimuthEncoder.getRotationDegrees()), 0, Constants.kCanTimeoutMs);
         azimuthMotor.setNeutralMode(NeutralMode.Coast);
+        azimuthMotor.setInverted(RobotMap.AZIMUTH_REVERSED[name.ordinal()]);
         azimuthMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 25, 40, 0.1));
         azimuthMotor.config_kP(0, pid.getKP(), Constants.kCanTimeoutMs);
         azimuthMotor.config_kI(0, pid.getKI(), Constants.kCanTimeoutMs);
@@ -103,7 +104,15 @@ public class SwerveModule {
     }
 
     public void syncAzimuth() {
-        azimuthMotor.setSelectedSensorPosition(azimuthEncoder.getRotation2048(), 0, Constants.kCanTimeoutMs);
+        Rotation2d currentAngle = getState().angle; 
+        double targetAngle = azimuthEncoder.getRotationDegrees();
+        if (Math.floor(currentAngle.getDegrees() / 360.0) != 0) {
+            // always positive modulus function = (a % b + b) % b
+            // taking the angle in [0, 360) then adding the number of full rotations * 360
+            targetAngle = ((targetAngle % 360 + 360) % 360)
+                    + Math.floor(currentAngle.getDegrees() / 360.0) * 360.0;
+        }
+        azimuthMotor.setSelectedSensorPosition(Constants.degreesToFalcon(targetAngle), 0, Constants.kCanTimeoutMs);
     }
 
     public SwerveModuleState getState() {

@@ -14,6 +14,8 @@ import frc.robot.Constants;
 
 public class SwerveDrive {
 
+    //TODO: robot not zeroing to environment on startup
+    //TODO: issues rotating and translation (it just drives forwards relative to itself)
     public SwerveDriveOdometry odometry;
     public SwerveModule[] swerveModules;
     public AHRS navX;
@@ -25,16 +27,14 @@ public class SwerveDrive {
                 new SwerveModule(Constants.SwerveModuleName.BACK_LEFT),
                 new SwerveModule(Constants.SwerveModuleName.BACK_RIGHT)
         };
-        navX = new AHRS(Port.kMXP);
+        this.swerveModules = swerveModules;
+        this.navX = new AHRS(Port.kMXP);
         navX.zeroYaw();
-        odometry = new SwerveDriveOdometry(Constants.swerveKinematics, getYaw());
+        this.odometry = new SwerveDriveOdometry(Constants.swerveKinematics, getYaw());
     }
 
     public void drive(double x, double y, double r) {
-        x = (Math.abs(x) < Constants.DEADBAND) ? 0 : x;
-        y = (Math.abs(y) < Constants.DEADBAND) ? 0 : y;
-        r = (Math.abs(r) < Constants.DEADBAND) ? 0 : r;
-        Translation2d translation = new Translation2d(y, x).times(Constants.MAX_SWERVE_SPEED);
+        Translation2d translation = new Translation2d(x, y).times(Constants.MAX_SWERVE_SPEED);
         double rotation = r * Constants.MAX_ROTATION_SPEED;
         //assuming driver in control if reading off controller
         drive(translation, rotation, true, true);
@@ -85,6 +85,7 @@ public class SwerveDrive {
     }
 
     public Rotation2d getYaw() {
+        //something in this is wrong
         double yaw = navX.getYaw() + 180;
         return Rotation2d.fromDegrees(Constants.NAVX_FACING_UP ? yaw : 360 - yaw);
     }

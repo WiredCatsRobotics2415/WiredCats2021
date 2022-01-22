@@ -8,11 +8,17 @@ public class RobotMap {
     public static final int BACK_RIGHT_SWERVE_AZIMUTH = 23;
     public static final int[] AZIMUTH_PORTS = {FRONT_LEFT_SWERVE_AZIMUTH, FRONT_RIGHT_SWERVE_AZIMUTH, BACK_LEFT_SWERVE_AZIMUTH, BACK_RIGHT_SWERVE_AZIMUTH};
 
-    public static final boolean FRONT_LEFT_SWERVE_AZIMUTH_REV = true;
-    public static final boolean FRONT_RIGHT_SWERVE_AZIMUTH_REV = true;
-    public static final boolean BACK_LEFT_SWERVE_AZIMUTH_REV = true;
-    public static final boolean BACK_RIGHT_SWERVE_AZIMUTH_REV = true;
+    public static final boolean FRONT_LEFT_SWERVE_AZIMUTH_REV = false;
+    public static final boolean FRONT_RIGHT_SWERVE_AZIMUTH_REV = false;
+    public static final boolean BACK_LEFT_SWERVE_AZIMUTH_REV = false;
+    public static final boolean BACK_RIGHT_SWERVE_AZIMUTH_REV = false;
     public static final boolean[] AZIMUTH_REVERSED = {FRONT_LEFT_SWERVE_AZIMUTH_REV, FRONT_RIGHT_SWERVE_AZIMUTH_REV, BACK_LEFT_SWERVE_AZIMUTH_REV, BACK_RIGHT_SWERVE_AZIMUTH_REV};
+
+    public static final boolean FRONT_LEFT_SWERVE_DRIVE_REV = false;//true
+    public static final boolean FRONT_RIGHT_SWERVE_DRIVE_REV = false;
+    public static final boolean BACK_LEFT_SWERVE_DRIVE_REV = false;//true
+    public static final boolean BACK_RIGHT_SWERVE_DRIVE_REV = false;
+    public static final boolean[] DRIVE_REVERSED = {FRONT_LEFT_SWERVE_DRIVE_REV, FRONT_RIGHT_SWERVE_DRIVE_REV, BACK_LEFT_SWERVE_DRIVE_REV, BACK_RIGHT_SWERVE_DRIVE_REV};
 
     public static final int FRONT_LEFT_SWERVE_DRIVE = 22;
     public static final int FRONT_RIGHT_SWERVE_DRIVE = 35;
