@@ -1,6 +1,6 @@
 package frc.util.pid;
 
-import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.math.controller.PIDController;
 
 public class PIDValue implements Cloneable {
     private double kP, kI, kD;

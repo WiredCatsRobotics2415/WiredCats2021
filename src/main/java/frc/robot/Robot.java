@@ -9,17 +9,16 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.subsystems.Gearbox;
 import frc.subsystems.Intake;
 import frc.subsystems.SwerveDrive;
 import frc.subsystems.Turret;
 import frc.util.CSVReader;
-import frc.util.PathFollowerController;
-import frc.util.SwerveOdometry;
 import frc.subsystems.Spindexer;
 import frc.subsystems.Feeder;
 
@@ -36,15 +35,10 @@ public class Robot extends TimedRobot {
     private static Feeder feeder;
     private static Gearbox gearbox;
     private static Turret turret;
-    private static PowerDistributionPanel pdp;
+    private static PowerDistribution pdp;
     private static Compressor compressor;
     public static SwerveDrive swerveDrive;
     private static OI oi;
-    public static PathFollowerController pathController;
-    public static SwerveOdometry odometry;
-    public static final String saveName = "WiredCats2021";
-    private int pathCount = 0;
-    int counter = 10000;
 
 
     /**
@@ -54,16 +48,15 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         turret = new Turret();
-        swerveDrive = new SwerveDrive(Constants.SWERVE_TUNING, Constants.SWERVE_LOGGING);
+        swerveDrive = new SwerveDrive();
         intake = new Intake();
         spindexer = new Spindexer();
         feeder = new Feeder();
         gearbox = new Gearbox(spindexer, feeder);
-        pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
+        pdp = new PowerDistribution(RobotMap.PDP_ID, ModuleType.kCTRE);
         //compressor = new Compressor(RobotMap.PCM_ID);
         oi = new OI(turret);
         swerveDrive.zeroYaw();
-        counter = 10;
     }
 
     /**
@@ -93,15 +86,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        //turret.setTurretAngle(90);
-        //shootAuto(3);
-        CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/2021testf.csv");
-        pathController = new PathFollowerController(swerveDrive, csvReader.getValues(), Constants.KS, Constants.KV,Constants.KA, 1, Constants.DRIVE_DISTANCE_PID, Constants.TURNING_PID, true);
-        //intake.extend();
-        //intake.startMotor(0.5);
-        //spindexer.toggleMotor(0.5);
-        pathController.start();
-        //counter = 10000;
     }
 
     public void shootAuto(double delay) {
@@ -122,7 +106,7 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
-        if (!pathController.getFinished()) pathController.run();
+        //if (!pathController.getFinished()) pathController.run();
         /*else if (pathCount < 1) {
             CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/grits6balltrenchdone.csv");
             pathController = new PathFollowerController(swerveDrive, csvReader.getValues(), Constants.KS, Constants.KV,
@@ -160,8 +144,8 @@ public class Robot extends TimedRobot {
             else turning = false;
             */
             if (oi.getRawButtonPressed(14)) {
-                System.out.println("zero Encoders");
-                swerveDrive.zeroEncoders();
+                System.out.println("sync azimuth");
+                swerveDrive.syncAzimuth();
             }
             if (oi.getIntakeToggle() && !gearbox.getClimber()) {
                 intake.toggleExtend();
@@ -202,16 +186,7 @@ public class Robot extends TimedRobot {
             spindexer.checkCurrent();
         } else {
             if (oi.getRawButtonPressed(1)) {
-                swerveDrive.printModuleEncoders(Constants.SwerveModuleName.FRONT_LEFT);
-            }
-            if (oi.getRawButtonPressed(2)) {
-                swerveDrive.printModuleEncoders(Constants.SwerveModuleName.FRONT_RIGHT);
-            }
-            if (oi.getRawButtonPressed(3)) {
-                swerveDrive.printModuleEncoders(Constants.SwerveModuleName.BACK_LEFT);
-            }
-            if (oi.getRawButtonPressed(4)) {
-                swerveDrive.printModuleEncoders(Constants.SwerveModuleName.BACK_RIGHT);
+                swerveDrive.printEncoders();
             }
         }
         oi.updateShuffleboard(turret);

@@ -1,6 +1,7 @@
 package frc.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 
 import com.revrobotics.CANSparkMax;
@@ -14,8 +15,8 @@ public class Intake {
     CANSparkMax motor; 
 
     public Intake() {
-        leftSolenoid = new Solenoid(RobotMap.PCM_ID, RobotMap.LEFT_INTAKE);
-        rightSolenoid = new Solenoid(RobotMap.PCM_ID, RobotMap.RIGHT_INTAKE);
+        leftSolenoid = new Solenoid(RobotMap.PCM_ID, PneumaticsModuleType.CTREPCM, RobotMap.LEFT_INTAKE);
+        rightSolenoid = new Solenoid(RobotMap.PCM_ID, PneumaticsModuleType.CTREPCM, RobotMap.RIGHT_INTAKE);
         motor = new CANSparkMax(RobotMap.INTAKE_MOTOR, CANSparkMax.MotorType.kBrushless);
         stopMotor();
         retract();
