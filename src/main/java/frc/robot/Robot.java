@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -20,6 +21,7 @@ import frc.subsystems.SwerveDrive;
 import frc.subsystems.Turret;
 import frc.util.CSVReader;
 import frc.subsystems.Spindexer;
+import frc.auto.AutoCircle;
 import frc.subsystems.Feeder;
 
 /**
@@ -106,20 +108,6 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
-        //if (!pathController.getFinished()) pathController.run();
-        /*else if (pathCount < 1) {
-            CSVReader csvReader = new CSVReader(Filesystem.getDeployDirectory() + "/grits6balltrenchdone.csv");
-            pathController = new PathFollowerController(swerveDrive, csvReader.getValues(), Constants.KS, Constants.KV,
-                Constants.KA, 1, Constants.DRIVE_DISTANCE_PID, Constants.TURNING_PID, true);
-            pathController.start();
-            pathCount++;
-        } else {
-            intake.stopMotor();
-            intake.retract();
-            shootAuto(3);
-            turret.setTurretAngle(0);
-        }
-        */
     }
 
     /** This function is called once when teleop is enabled. */

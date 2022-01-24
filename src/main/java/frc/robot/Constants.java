@@ -14,6 +14,7 @@ public class Constants {
     public static final double SWERVE_AZIMUTH_GEAR_RATIO = 56.0 / 3.0;
     public static final double SWERVE_DRIVE_GEAR_RATIO = (28.0/11.0) * 3.0;
     public static final double SWERVE_WHEEL_CIRCUMFERENCE = Math.PI * Units.inchesToMeters(3.4);
+
     public static final double SWERVE_LEFTRIGHT_DISTANCE = Units.inchesToMeters(25.0);
     public static final double SWERVE_FRONTBACK_DISTANCE = Units.inchesToMeters(24.75);
 

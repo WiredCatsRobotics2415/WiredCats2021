@@ -38,14 +38,6 @@ public class RobotMap {
     public static final boolean BACK_RIGHT_AZIMUTH_ENCODER_REV = true;
     public static final boolean[] AZIMUTH_ENCODER_REV = {FRONT_LEFT_AZIMUTH_ENCODER_REV, FRONT_RIGHT_AZIMUTH_ENCODER_REV, BACK_LEFT_AZIMUTH_ENCODER_REV, BACK_RIGHT_AZIMUTH_ENCODER_REV};
 
-    public static final double FRONT_LEFT_MODULE_X = -29.46/2.0, FRONT_LEFT_MODULE_Y = 29.46/2.0; // inches
-    public static final double FRONT_RIGHT_MODULE_X = 29.46/2.0, FRONT_RIGHT_MODULE_Y = 29.46/2.0; // quick values for sqare robot
-    public static final double BACK_LEFT_MODULE_X = -29.46/2.0, BACK_LEFT_MODULE_Y = -29.46/2.0;
-    public static final double BACK_RIGHT_MODULE_X = 29.46/2.0, BACK_RIGHT_MODULE_Y = -29.46/2.0;
-
-    public static final double CENTER_OF_MASS_X = 0;
-    public static final double CENTER_OF_MASS_Y = 0;
-
     // Intake
     public static final int INTAKE_MOTOR = 18;
     public static final int LEFT_INTAKE = 5;
@@ -67,6 +59,5 @@ public class RobotMap {
 
     // PCM
     public static final int PCM_ID = 6;
-    //maybe the issue
     public static final int PDP_ID = 5;
 }

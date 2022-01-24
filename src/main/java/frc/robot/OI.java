@@ -45,21 +45,21 @@ public class OI {
     }
 
     public double getX() {
-        double val = this.controller.getRawAxis(0) * -1;
+        double val = this.controller.getRawAxis(0);
         if (Math.abs(val) < Constants.DEADBAND)
             return 0;
         return val;
     }
 
     public double getY() {
-        double val = this.controller.getRawAxis(1);
+        double val = this.controller.getRawAxis(1) * -1;
         if (Math.abs(val) < Constants.DEADBAND)
             return 0;
         return val;
     }
 
     public double getRotation() {
-        double val = this.controller.getRawAxis(2) * -1;
+        double val = this.controller.getRawAxis(2);
         if (Math.abs(val) < Constants.DEADBAND)
             return 0;
         return val;
