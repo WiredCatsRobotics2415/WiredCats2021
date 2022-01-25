@@ -32,6 +32,16 @@ public class SwerveDrive extends SubsystemBase {
         this.odometry = new SwerveDriveOdometry(Constants.swerveKinematics, getYaw());
     }
 
+    public static double putInRange(double desiredSetAngle, double currentAngle) {
+        if (Math.floor(currentAngle / 360.0) != 0) {
+            // always positive modulus function = (a % b + b) % b
+            // taking the angle in [0, 360) then adding the number of full rotations * 360
+            desiredSetAngle = ((desiredSetAngle % 360 + 360) % 360)
+                    + Math.floor(currentAngle / 360.0) * 360.0;
+        }
+        return desiredSetAngle;
+    }
+
     public void drive(double x, double y, double r) {
         Translation2d translation = new Translation2d(x, y).times(Constants.MAX_SWERVE_SPEED);
         double rotation = r * Constants.MAX_ROTATION_SPEED;

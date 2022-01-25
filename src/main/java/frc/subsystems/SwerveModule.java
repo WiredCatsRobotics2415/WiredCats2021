@@ -40,20 +40,18 @@ public class SwerveModule {
     public static SwerveModuleState optimize(SwerveModuleState state, Rotation2d currentAngle) {
         double speed = state.speedMetersPerSecond;
         double targetAngle = state.angle.getDegrees();
-        if (Math.floor(currentAngle.getDegrees() / 360.0) != 0) {
-            // always positive modulus function = (a % b + b) % b
-            // taking the angle in [0, 360) then adding the number of full rotations * 360
-            targetAngle = ((state.angle.getDegrees() % 360 + 360) % 360)
-                    + Math.floor(currentAngle.getDegrees() / 360.0) * 360.0;
-        }
+        targetAngle = SwerveDrive.putInRange(state.angle.getDegrees(), currentAngle.getDegrees());
         double delta = targetAngle - currentAngle.getDegrees();
-        if (Math.abs(delta) > 90) {
+        if (Math.abs(delta) > 90 && Math.abs(delta) < 270) {
             speed *= -1;
-            if (delta > 90) {
+            if (delta > 0) {
                 targetAngle -= 180;
             } else {
                 targetAngle += 180;
             }
+        } else if (Math.abs(delta) >= 270) {
+            if (delta > 0) targetAngle -= 360;
+            else targetAngle += 360;
         }
         return new SwerveModuleState(speed, Rotation2d.fromDegrees(targetAngle));
     }
@@ -104,14 +102,8 @@ public class SwerveModule {
     }
 
     public void syncAzimuth() {
-        Rotation2d currentAngle = getState().angle; 
         double targetAngle = azimuthEncoder.getRotationDegrees();
-        if (Math.floor(currentAngle.getDegrees() / 360.0) != 0) {
-            // always positive modulus function = (a % b + b) % b
-            // taking the angle in [0, 360) then adding the number of full rotations * 360
-            targetAngle = ((targetAngle % 360 + 360) % 360)
-                    + Math.floor(currentAngle.getDegrees() / 360.0) * 360.0;
-        }
+        targetAngle = SwerveDrive.putInRange(targetAngle, getState().angle.getDegrees());
         azimuthMotor.setSelectedSensorPosition(Constants.degreesToFalcon(targetAngle), 0, Constants.kCanTimeoutMs);
     }
 
