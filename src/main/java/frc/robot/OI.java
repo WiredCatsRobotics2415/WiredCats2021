@@ -59,7 +59,7 @@ public class OI {
     }
 
     public double getRotation() {
-        double val = this.controller.getRawAxis(2);
+        double val = this.controller.getRawAxis(2) * -1;
         if (Math.abs(val) < Constants.DEADBAND)
             return 0;
         return val;

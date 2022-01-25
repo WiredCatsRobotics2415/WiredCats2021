@@ -7,11 +7,13 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 
-public class Spindexer {
+public class Spindexer extends SubsystemBase {
     private static double CURRENT_MAX = 10;
     private TalonFX motor;
     private Solenoid solenoid; 
@@ -31,7 +33,7 @@ public class Spindexer {
         this.motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40, 40, .1));
         this.motor.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
 
-        this.solenoid = new Solenoid(RobotMap.PCM_ID, RobotMap.RIGHT_GEARBOX_PISTON);
+        this.solenoid = new Solenoid(RobotMap.PCM_ID, PneumaticsModuleType.CTREPCM, RobotMap.RIGHT_GEARBOX_PISTON);
         this.solenoid.set(false);
 
         this.climber = false;

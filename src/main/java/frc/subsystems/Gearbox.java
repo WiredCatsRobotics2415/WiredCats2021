@@ -1,6 +1,8 @@
 package frc.subsystems;
 
-public class Gearbox {
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Gearbox extends SubsystemBase {
     private Spindexer spindexer;
     private Feeder feeder;
     private boolean climber;

@@ -7,11 +7,13 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 
-public class Feeder {
+public class Feeder extends SubsystemBase {
     private TalonFX motor;
     private Solenoid solenoid; 
     private boolean climber;
@@ -29,7 +31,7 @@ public class Feeder {
         this.motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40, 40, .1));
         this.motor.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
 
-        this.solenoid = new Solenoid(RobotMap.PCM_ID, RobotMap.LEFT_GEARBOX_PISTON);
+        this.solenoid = new Solenoid(RobotMap.PCM_ID, PneumaticsModuleType.CTREPCM, RobotMap.LEFT_GEARBOX_PISTON);
         this.solenoid.set(false);
 
         this.climber = false;

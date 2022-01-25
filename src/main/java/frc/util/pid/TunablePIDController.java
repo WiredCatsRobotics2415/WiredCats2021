@@ -7,7 +7,7 @@
 
 package frc.util.pid;
 
-import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.math.controller.PIDController;
 
 /**
  * Add your docs here.
