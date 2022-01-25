@@ -8,12 +8,13 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.util.PWMAbsoluteEncoder;
 import frc.util.pid.TalonFxTunable;
 
-public class Turret {
+public class Turret extends SubsystemBase {
     private TalonFX rightShooterTalon, leftShooterTalon;
     private TalonFxTunable shooterController;
 

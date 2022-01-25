@@ -3,6 +3,7 @@ package frc.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,7 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
 
-public class SwerveDrive {
+public class SwerveDrive extends SubsystemBase {
 
     public SwerveDriveOdometry odometry;
     public SwerveModule[] swerveModules;
@@ -84,7 +85,7 @@ public class SwerveDrive {
 
     public Rotation2d getYaw() {
         double yaw = navX.getYaw();
-        if (!Constants.NAVX_FACING_UP) yaw *= -1;
+        if (Constants.NAVX_FACING_UP) yaw *= -1;
         if (yaw < 0) {
             yaw = 360 - (yaw * -1);
         }

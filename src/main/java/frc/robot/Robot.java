@@ -6,20 +6,18 @@ package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.subsystems.Gearbox;
 import frc.subsystems.Intake;
 import frc.subsystems.SwerveDrive;
 import frc.subsystems.Turret;
-import frc.util.CSVReader;
 import frc.subsystems.Spindexer;
 import frc.auto.AutoCircle;
 import frc.subsystems.Feeder;
@@ -40,6 +38,7 @@ public class Robot extends TimedRobot {
     private static PowerDistribution pdp;
     private static Compressor compressor;
     public static SwerveDrive swerveDrive;
+    private static AutoCircle autoCircle;
     private static OI oi;
 
 
@@ -57,6 +56,7 @@ public class Robot extends TimedRobot {
         gearbox = new Gearbox(spindexer, feeder);
         pdp = new PowerDistribution(RobotMap.PDP_ID, ModuleType.kCTRE);
         //compressor = new Compressor(RobotMap.PCM_ID);
+        autoCircle = new AutoCircle(swerveDrive);
         oi = new OI(turret);
         swerveDrive.zeroYaw();
     }
@@ -88,6 +88,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
+        CommandScheduler.getInstance().schedule(autoCircle);
     }
 
     public void shootAuto(double delay) {
@@ -108,11 +109,13 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
+        CommandScheduler.getInstance().run();
     }
 
     /** This function is called once when teleop is enabled. */
     @Override
     public void teleopInit() {
+        CommandScheduler.getInstance().cancelAll();
         intake.retract();
         intake.stopMotor();
     }

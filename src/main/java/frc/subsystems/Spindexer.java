@@ -9,10 +9,11 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 
-public class Spindexer {
+public class Spindexer extends SubsystemBase {
     private static double CURRENT_MAX = 10;
     private TalonFX motor;
     private Solenoid solenoid; 

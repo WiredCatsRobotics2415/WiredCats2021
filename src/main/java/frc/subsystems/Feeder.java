@@ -9,10 +9,11 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 
-public class Feeder {
+public class Feeder extends SubsystemBase {
     private TalonFX motor;
     private Solenoid solenoid; 
     private boolean climber;
