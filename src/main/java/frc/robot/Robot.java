@@ -30,7 +30,7 @@ import frc.subsystems.Feeder;
  * project.
  */
 public class Robot extends TimedRobot {
-    private static Intake intake;
+    public static Intake intake;
     private static Spindexer spindexer;
     private static Feeder feeder;
     private static Gearbox gearbox;
@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
         gearbox = new Gearbox(spindexer, feeder);
         pdp = new PowerDistribution(RobotMap.PDP_ID, ModuleType.kCTRE);
         //compressor = new Compressor(RobotMap.PCM_ID);
-        autoCircle = new AutoCircle(swerveDrive);
+        try {autoCircle = new AutoCircle(swerveDrive);} catch (Exception e) {}
         oi = new OI(turret);
         swerveDrive.zeroYaw();
     }
