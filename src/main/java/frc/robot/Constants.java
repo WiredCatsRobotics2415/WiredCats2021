@@ -25,10 +25,10 @@ public class Constants {
         new Translation2d(-SWERVE_LEFTRIGHT_DISTANCE / 2.0, -SWERVE_FRONTBACK_DISTANCE / 2.0),
         new Translation2d(SWERVE_LEFTRIGHT_DISTANCE / 2.0, -SWERVE_FRONTBACK_DISTANCE / 2.0));
 
-    public static final PIDValue FRONT_LEFT_AZIMUTH_PID = new PIDValue(0.5, 0.0, 11);
-    public static final PIDValue FRONT_RIGHT_AZIMUTH_PID = new PIDValue(0.5, 0.0, 11);
-    public static final PIDValue BACK_LEFT_AZIMUTH_PID = new PIDValue(0.5, 0.0, 11);
-    public static final PIDValue BACK_RIGHT_AZIMUTH_PID = new PIDValue(0.5, 0.0, 11);
+    public static final PIDValue FRONT_LEFT_AZIMUTH_PID = new PIDValue(0.4, 0.0, 5);
+    public static final PIDValue FRONT_RIGHT_AZIMUTH_PID = new PIDValue(0.4, 0.0, 5);
+    public static final PIDValue BACK_LEFT_AZIMUTH_PID = new PIDValue(0.4, 0.0, 5);
+    public static final PIDValue BACK_RIGHT_AZIMUTH_PID = new PIDValue(0.4, 0.0, 5);
     public static final PIDValue[] AZIMUTH_PID_VALUES = {FRONT_LEFT_AZIMUTH_PID, FRONT_RIGHT_AZIMUTH_PID, BACK_LEFT_AZIMUTH_PID, BACK_RIGHT_AZIMUTH_PID};
 
     public static final PIDFValue FRONT_LEFT_VEL_DRIVE_PIDF = new PIDFValue(0.10, 0.0, 0.0, 0.0);
@@ -44,12 +44,12 @@ public class Constants {
     public static final PIDFValue SHOOTER_PIDF = new PIDFValue(0.2, 0.00001, 0.3, 0.063);
     public static final PIDValue TURRET_PID = new PIDValue(13.0, 0.0, 5.0);
 
-    public static final double KS = 0.66 / 12.0, KV = 2.44 / 12.0, KA = 0.27 / 12.0;// 1.0;
+    public static final double KS = 0.776 / 12.0, KV = 2.978 / 12.0, KA = 0.517 / 12.0;// 1.0;
 
-    public static final double FRONT_LEFT_AZIMUTH_ENCODER_OFFSET = 144.8+90;//36.6+90;//36.2+90;//-322.7;//36.2+90;//305.86-180;//304.56 - 180.33;// 304-180; // offset by 90
-    public static final double FRONT_RIGHT_AZIMUTH_ENCODER_OFFSET = 168.7-90;//322-90;//318.9-90;//-50.2;//318.9-90;//72.75+180.0;//163.28 + 180;// 165.24-180;//146.5+180;//5.976+180;
-    public static final double BACK_LEFT_AZIMUTH_ENCODER_OFFSET = 105.5+90;//285.5+90;//288.6+90;//-74.5;//288.6+90;//218;// 219.7;
-    public static final double BACK_RIGHT_AZIMUTH_ENCODER_OFFSET = 244-90;//238.4-90;//220-90;//-126.2;//220-90;//212.35;//214.1-4;//211 + 2;// 211.6;
+    public static final double FRONT_LEFT_AZIMUTH_ENCODER_OFFSET = 142.4+90;//36.6+90;//36.2+90;//-322.7;//36.2+90;//305.86-180;//304.56 - 180.33;// 304-180; // offset by 90
+    public static final double FRONT_RIGHT_AZIMUTH_ENCODER_OFFSET = 51.3-90;//322-90;//318.9-90;//-50.2;//318.9-90;//72.75+180.0;//163.28 + 180;// 165.24-180;//146.5+180;//5.976+180;
+    public static final double BACK_LEFT_AZIMUTH_ENCODER_OFFSET = 104.8+90;//285.5+90;//288.6+90;//-74.5;//288.6+90;//218;// 219.7;
+    public static final double BACK_RIGHT_AZIMUTH_ENCODER_OFFSET = 260.5-90;//238.4-90;//220-90;//-126.2;//220-90;//212.35;//214.1-4;//211 + 2;// 211.6;
     public static final double[] ENCODER_OFFSETS = {FRONT_LEFT_AZIMUTH_ENCODER_OFFSET, FRONT_RIGHT_AZIMUTH_ENCODER_OFFSET, BACK_LEFT_AZIMUTH_ENCODER_OFFSET, BACK_RIGHT_AZIMUTH_ENCODER_OFFSET};
     
     public static final double MOTORMIN = 0.05;

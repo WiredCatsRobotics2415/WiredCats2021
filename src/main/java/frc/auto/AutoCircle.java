@@ -23,9 +23,13 @@ public class AutoCircle extends SequentialCommandGroup {
                 .setKinematics(Constants.swerveKinematics);
 
         Pose2d start = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
-        Pose2d end = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
+        Pose2d end = new Pose2d(0, 0, Rotation2d.fromDegrees(180));
 
         ArrayList<Translation2d> waypoints = new ArrayList<Translation2d>();
+        waypoints.add(new Translation2d(0, 1));
+        waypoints.add(new Translation2d(1, 1));
+        waypoints.add(new Translation2d(1, 0));
+        waypoints.add(new Translation2d(0, 0));
         waypoints.add(new Translation2d(0, 1));
         waypoints.add(new Translation2d(1, 1));
         waypoints.add(new Translation2d(1, 0));

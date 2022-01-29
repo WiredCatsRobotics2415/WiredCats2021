@@ -110,4 +110,9 @@ public class SwerveDrive extends SubsystemBase {
         odometry.resetPosition(pose, getYaw());
     }
 
+    @Override
+    public void periodic() {
+        odometry.update(getYaw(), getStates());
+    }
+
 }
