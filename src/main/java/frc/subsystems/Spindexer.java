@@ -9,6 +9,7 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -20,6 +21,7 @@ public class Spindexer extends SubsystemBase {
     private boolean climber;
     private double speed;
     boolean running;
+    private InstantCommand spindexerCommand;
 
     public Spindexer() {
         this.motor = new TalonFX(RobotMap.RIGHT_GEARBOX_MOTOR);
@@ -95,4 +97,8 @@ public class Spindexer extends SubsystemBase {
             }
         }
     }
+
+    public InstantCommand getSpindexerCommand() {
+        return new InstantCommand(() -> toggleMotor(0.5));
+    } 
 }

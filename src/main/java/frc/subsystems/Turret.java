@@ -8,6 +8,9 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -24,6 +27,7 @@ public class Turret extends SubsystemBase {
     private PWMAbsoluteEncoder turnEncoder;
 
     private boolean running;
+    private ParallelRaceGroup shooterCommand; 
 
 
     public Turret() {
@@ -86,6 +90,7 @@ public class Turret extends SubsystemBase {
         //this.turretController.setSetpointDegrees(turnEncoder.getRotationDegrees());
 
         this.turnEncoder.closeEncoder();
+
     }
 
     public void setShooterSpeed(double speed) {
@@ -162,6 +167,10 @@ public class Turret extends SubsystemBase {
 
     public void stopEncoder() {
         this.turnEncoder.closeEncoder();
+    }
+
+    public ParallelRaceGroup getShooterCommand() {
+        return new StartEndCommand(() -> setShooterSpeed(6000), () -> setShooterSpeed(0)).withTimeout(5);
     }
 
 }

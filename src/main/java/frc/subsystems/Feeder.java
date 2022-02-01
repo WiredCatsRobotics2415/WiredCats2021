@@ -9,6 +9,7 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -70,5 +71,7 @@ public class Feeder extends SubsystemBase {
         return this.climber;
     }
 
-
+    public InstantCommand getFeederCommand() {
+        return new InstantCommand(() -> toggleMotor(0.5));
+    }
 }

@@ -1,39 +1,38 @@
 package frc.auto;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.subsystems.SwerveDrive;
 
 public class AutoCircle extends SequentialCommandGroup {
 
-    public AutoCircle(SwerveDrive swerveDrive) throws IOException {
-        //basically java is dumb and requires exception handling for paths
-        //but you can't try-catch this bc lambda expressions require the trajectory to be final
-        //so the solution is to say autocircle throws the exception and catch it in the robot init
-        Path filePath = Filesystem.getDeployDirectory().toPath().resolve("SimpleRotationTest.wpilib.json");
-        final Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(filePath);
-        //setting up the pid controllers (theta for rotation) (these pid values need tuning prob)
+    public AutoCircle(SwerveDrive swerveDrive) {
+        final PathPlannerTrajectory trajectory = PathPlanner.loadPath("SimpleRotationTest", 3, 3, true);
+        // setting up the pid controllers (theta for rotation) (these pid values need
+        // tuning prob)
         ProfiledPIDController thetaController = new ProfiledPIDController(1, 0, 0, Constants.THETA_CONSTRAINTS);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
         PIDController xController = new PIDController(1, 0, 0);
         PIDController yController = new PIDController(1, 0, 0);
 
-        SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(trajectory, swerveDrive::getPose,
+        SequentialCommandGroup swerveControllerCommand = new PPSwerveControllerCommand(trajectory, swerveDrive::getPose,
                 Constants.swerveKinematics, xController, yController, thetaController, swerveDrive::setModuleStates,
-                swerveDrive);
+                swerveDrive).andThen(new InstantCommand(() -> swerveDrive.drive(0, 0, 0)));
         addCommands(new InstantCommand(() -> swerveDrive.resetOdometry(trajectory.getInitialPose())),
-                new ParallelCommandGroup(swerveControllerCommand, Robot.intake.getIntakeCommand()), Robot.intake.getIntakeCommand());
+                new ParallelCommandGroup(swerveControllerCommand,
+                        new WaitCommand(trajectory.getTotalTimeSeconds() - 1)
+                                .andThen(Robot.spindexer.getSpindexerCommand(), Robot.intake.getIntakeCommand())),
+                new WaitCommand(1),
+                new ParallelCommandGroup(Robot.intake.getIntakeCommand(), Robot.spindexer.getSpindexerCommand()));
     }
 }

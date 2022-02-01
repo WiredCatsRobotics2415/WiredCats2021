@@ -6,6 +6,9 @@ package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+
+import java.io.IOException;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -20,6 +23,7 @@ import frc.subsystems.SwerveDrive;
 import frc.subsystems.Turret;
 import frc.subsystems.Spindexer;
 import frc.auto.AutoCircle;
+import frc.auto.MultiPath;
 import frc.subsystems.Feeder;
 
 /**
@@ -31,14 +35,13 @@ import frc.subsystems.Feeder;
  */
 public class Robot extends TimedRobot {
     public static Intake intake;
-    private static Spindexer spindexer;
-    private static Feeder feeder;
+    public static Spindexer spindexer;
+    public static Feeder feeder;
     private static Gearbox gearbox;
-    private static Turret turret;
+    public static Turret turret;
     private static PowerDistribution pdp;
     private static Compressor compressor;
     public static SwerveDrive swerveDrive;
-    private static AutoCircle autoCircle;
     private static OI oi;
 
 
@@ -56,7 +59,6 @@ public class Robot extends TimedRobot {
         gearbox = new Gearbox(spindexer, feeder);
         pdp = new PowerDistribution(RobotMap.PDP_ID, ModuleType.kCTRE);
         //compressor = new Compressor(RobotMap.PCM_ID);
-        try {autoCircle = new AutoCircle(swerveDrive);} catch (Exception e) {}
         oi = new OI(turret);
         swerveDrive.zeroYaw();
     }
@@ -88,7 +90,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        CommandScheduler.getInstance().schedule(autoCircle);
+        CommandScheduler.getInstance().schedule(new AutoCircle(swerveDrive));
     }
 
     public void shootAuto(double delay) {

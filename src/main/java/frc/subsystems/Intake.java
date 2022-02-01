@@ -25,8 +25,6 @@ public class Intake extends SubsystemBase {
         retract();
         running = false;
         extended = false;
-        this.intakeCommand = new ParallelCommandGroup(new InstantCommand(() -> toggleExtend()),
-                new InstantCommand(() -> toggleMotor(0.5)));
     }
 
     public void extend() {
@@ -66,6 +64,7 @@ public class Intake extends SubsystemBase {
     }
 
     public ParallelCommandGroup getIntakeCommand() {
-        return this.intakeCommand;
+        return new ParallelCommandGroup(new InstantCommand(() -> toggleExtend()),
+                new InstantCommand(() -> toggleMotor(0.5)));
     }
 }
