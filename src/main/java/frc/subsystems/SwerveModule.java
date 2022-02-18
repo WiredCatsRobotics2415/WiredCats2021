@@ -104,6 +104,7 @@ public class SwerveModule {
     public void syncAzimuth() {
         double targetAngle = azimuthEncoder.getRotationDegrees();
         targetAngle = SwerveDrive.putInRange(targetAngle, getState().angle.getDegrees());
+        lastAngle = targetAngle;
         azimuthMotor.setSelectedSensorPosition(Constants.degreesToFalcon(targetAngle), 0, Constants.kCanTimeoutMs);
     }
 

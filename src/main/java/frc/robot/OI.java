@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.subsystems.SwerveDrive;
 import frc.subsystems.Turret;
 
 public class OI {
@@ -148,7 +149,7 @@ public class OI {
         double newTurretAngle = SmartDashboard.getNumber("Competition/Turret Angle", turretAngle);
         if (newTurretAngle != turretAngle) {
             turretAngle = newTurretAngle;
-            //turret.setTurretAngle(turretAngle);
+            turret.setTurretAngle(turretAngle);
         }
     }
     

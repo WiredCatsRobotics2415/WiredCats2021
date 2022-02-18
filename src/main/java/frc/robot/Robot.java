@@ -9,6 +9,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import java.io.IOException;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -43,6 +44,8 @@ public class Robot extends TimedRobot {
     private static Compressor compressor;
     public static SwerveDrive swerveDrive;
     private static OI oi;
+    private boolean turning = false;
+    private int counter = 0;
 
 
     /**
@@ -128,14 +131,13 @@ public class Robot extends TimedRobot {
         
         //read values periodically
         if (!Constants.ZEROING) {
-            swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
-            /*if (Math.abs(oi.getTX()) > Constants.DEADBAND && !turning) {
-                turret.setTurretAngle(oi.getTurretAngle(turret));
+            //swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
+            if (Math.abs(oi.getTX()) > Constants.DEADBAND && !turning) {
+                //swerveDrive.drive(new Translation2d(), -oi.getTX(), false, false);
                 turning = true;
                 counter = 200;
             } else if (counter > 0) counter--;
             else turning = false;
-            */
             if (oi.getRawButtonPressed(14)) {
                 System.out.println("sync azimuth");
                 swerveDrive.syncAzimuth();
@@ -147,9 +149,9 @@ public class Robot extends TimedRobot {
             if (oi.getClimberToggle()) {
                 gearbox.toggleClimber();
             }
-            //if (oi.getAutoAimToggle()) {
-              //  turret.setTurretAngle(oi.getTurretAngle(turret));
-            //}
+            if (oi.getAutoAimToggle()) {
+                //turret.setTurretAngle(oi.getTurretAngle(turret));
+            }
             if (oi.getShooterToggle()) {
                 turret.toggleShooterSpeed(oi.getShooterSpeed());
                 feeder.runFeeder(0.5);
@@ -182,6 +184,7 @@ public class Robot extends TimedRobot {
                 swerveDrive.printEncoders();
             }
         }
+        System.out.println(swerveDrive.swerveModules[0].getEncoderAngle().getDegrees());
         oi.updateShuffleboard(turret);
         SmartDashboard.putNumber("Spindexer Current", spindexer.getCurrent());
     }

@@ -87,7 +87,7 @@ public class Turret extends SubsystemBase {
         this.turretController = new TalonFxTunable(this.turretMotor, Constants.TURRET_PID, ControlMode.Position);
 
         this.shooterController.setSetpoint(0);
-        //this.turretController.setSetpointDegrees(turnEncoder.getRotationDegrees());
+        this.turretController.setSetpointDegrees(turnEncoder.getRotationDegrees());
 
         this.turnEncoder.closeEncoder();
 
