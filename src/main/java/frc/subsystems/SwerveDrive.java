@@ -43,7 +43,7 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void drive(double x, double y, double r) {
-        Translation2d translation = new Translation2d(x, y).times(Constants.MAX_SWERVE_SPEED);
+        Translation2d translation = new Translation2d(y, x).times(Constants.MAX_SWERVE_SPEED);
         double rotation = r * Constants.MAX_ROTATION_SPEED;
         //assuming driver in control if reading off controller
         drive(translation, rotation, true, true);

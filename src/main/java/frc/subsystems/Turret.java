@@ -34,62 +34,65 @@ public class Turret extends SubsystemBase {
         // create motors
         this.leftShooterTalon = new TalonFX(RobotMap.LEFT_TURRET_MOTOR);
         this.rightShooterTalon = new TalonFX(RobotMap.RIGHT_TURRET_MOTOR);
-        this.turretMotor = new TalonFX(RobotMap.TURN_TURRET_MOTOR);
+        //this.turretMotor = new TalonFX(RobotMap.TURN_TURRET_MOTOR);
 
-        this.turnEncoder = new PWMAbsoluteEncoder(RobotMap.TURN_TURRET_ENCODER, Constants.TURN_TURRET_ENCODER_OFFSET, RobotMap.TURN_TURRET_ENCODER_REV);
+        //this.turnEncoder = new PWMAbsoluteEncoder(RobotMap.TURN_TURRET_ENCODER, Constants.TURN_TURRET_ENCODER_OFFSET, RobotMap.TURN_TURRET_ENCODER_REV);
         // declare settings for motors
         this.leftShooterTalon.configFactoryDefault(Constants.kCanTimeoutMs);
         this.rightShooterTalon.configFactoryDefault(Constants.kCanTimeoutMs);
-        this.turretMotor.configFactoryDefault(Constants.kCanTimeoutMs);
+        //this.turretMotor.configFactoryDefault(Constants.kCanTimeoutMs);
         // set encoder start configuration (start at 0)
         this.leftShooterTalon.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero,
                 Constants.kCanTimeoutMs);
         this.rightShooterTalon.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero,
                 Constants.kCanTimeoutMs);
-        this.turretMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero,
+        /*this.turretMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero,
                 Constants.kCanTimeoutMs);
+                */
         // set feedback device to be internal encoder
         this.leftShooterTalon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
                 Constants.kCanTimeoutMs);
         this.rightShooterTalon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
                 Constants.kCanTimeoutMs);
+                /*
         this.turretMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0,
                 Constants.kCanTimeoutMs);
+                */
         // set ratio of turret motor turns to turret turns
+        /*
         this.turretMotor.configSelectedFeedbackCoefficient(360.0/(2048.0*90.0), 0,
                 Constants.kCanTimeoutMs);
+                */
         // set brake modes
         this.leftShooterTalon.setNeutralMode(NeutralMode.Coast);
         this.rightShooterTalon.setNeutralMode(NeutralMode.Coast);
-        this.turretMotor.setNeutralMode(NeutralMode.Brake);
+        //this.turretMotor.setNeutralMode(NeutralMode.Brake);
         // set directions (because the motors on the shooter are opposite, one probably
         // needs to be inverted but check to be sure)
         // (don't drive both at the same time the 1st run)
         this.leftShooterTalon.setInverted(true);
         this.rightShooterTalon.setInverted(false);
-        this.turretMotor.setInverted(false);
+        //this.turretMotor.setInverted(false);
         // curent limits (you should play with the settings, I choose these kinda
         // random)
         this.leftShooterTalon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40, 40, .1));
         this.rightShooterTalon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40, 40, .1));
-        this.turretMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, .1));
+        //this.turretMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, .1));
         // max output by closed loop control
-        this.turretMotor.configClosedLoopPeakOutput(0, 0.8, Constants.kCanTimeoutMs);
+        //this.turretMotor.configClosedLoopPeakOutput(0, 0.8, Constants.kCanTimeoutMs);
         // deadband for closed loop error
-        this.turretMotor.configAllowableClosedloopError(0, 3.0, Constants.kCanTimeoutMs);
+        //this.turretMotor.configAllowableClosedloopError(0, 3.0, Constants.kCanTimeoutMs);
         // DeadBand
         this.leftShooterTalon.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
         this.rightShooterTalon.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
-        this.turretMotor.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
+        //this.turretMotor.configNeutralDeadband(Constants.MOTORMIN, Constants.kCanTimeoutMs);
 
         this.shooterController = new TalonFxTunable(this.rightShooterTalon, Constants.SHOOTER_PIDF, ControlMode.Velocity);
         this.leftShooterTalon.set(ControlMode.Follower, this.rightShooterTalon.getDeviceID());
-        this.turretController = new TalonFxTunable(this.turretMotor, Constants.TURRET_PID, ControlMode.Position);
+        //this.turretController = new TalonFxTunable(this.turretMotor, Constants.TURRET_PID, ControlMode.Position);
 
         this.shooterController.setSetpoint(0);
-        this.turretController.setSetpointDegrees(turnEncoder.getRotationDegrees());
-
-        this.turnEncoder.closeEncoder();
+        //this.turretController.setSetpointDegrees(turnEncoder.getRotationDegrees());
 
     }
 

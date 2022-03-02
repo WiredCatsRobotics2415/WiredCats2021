@@ -34,7 +34,7 @@ public class OI {
         this.ta = table.getEntry("ta");
         this.tuningMotor = turret.getShooter();
         this.shooterVelocity = turret.getShooterSpeed();
-        this.turretAngle = turret.getTurretAngle();
+        //this.turretAngle = turret.getTurretAngle();
         this.tuning = true;
         this.offset = 0;
         this.setValue = 0;
@@ -53,14 +53,14 @@ public class OI {
     }
 
     public double getY() {
-        double val = this.controller.getRawAxis(1) * -1;
+        double val = this.controller.getRawAxis(1);
         if (Math.abs(val) < Constants.DEADBAND)
             return 0;
         return val;
     }
 
     public double getRotation() {
-        double val = this.controller.getRawAxis(2) * -1;
+        double val = this.controller.getRawAxis(2);
         if (Math.abs(val) < Constants.DEADBAND)
             return 0;
         return val;
@@ -123,7 +123,7 @@ public class OI {
         updateCompetition(turret);
         SmartDashboard.putNumber("Competition/Shooter Velocity", this.shooterVelocity);
         SmartDashboard.putNumber("Competition/Turret Angle", this.turretAngle);
-        SmartDashboard.putNumber("Competition/Turret Angle Actual", turret.getTurretAngle());
+        //SmartDashboard.putNumber("Competition/Turret Angle Actual", turret.getTurretAngle());
         SmartDashboard.putNumber("Competition/Shooter Velocity Offset", this.offset);
         SmartDashboard.putNumber("Competition/Shooter Velocity Actual", turret.getShooterSpeed());
         SmartDashboard.putNumber("Competition/Shooter Velocity Diff", turret.getShooterSpeed()-turret.getShooterSetpoint() + offset);
@@ -149,7 +149,7 @@ public class OI {
         double newTurretAngle = SmartDashboard.getNumber("Competition/Turret Angle", turretAngle);
         if (newTurretAngle != turretAngle) {
             turretAngle = newTurretAngle;
-            turret.setTurretAngle(turretAngle);
+            //turret.setTurretAngle(turretAngle);
         }
     }
     

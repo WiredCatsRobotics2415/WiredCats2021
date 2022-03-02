@@ -131,7 +131,7 @@ public class Robot extends TimedRobot {
         
         //read values periodically
         if (!Constants.ZEROING) {
-            //swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
+            swerveDrive.drive(oi.getX(), oi.getY(), oi.getRotation());
             if (Math.abs(oi.getTX()) > Constants.DEADBAND && !turning) {
                 //swerveDrive.drive(new Translation2d(), -oi.getTX(), false, false);
                 turning = true;
@@ -184,7 +184,6 @@ public class Robot extends TimedRobot {
                 swerveDrive.printEncoders();
             }
         }
-        System.out.println(swerveDrive.swerveModules[0].getEncoderAngle().getDegrees());
         oi.updateShuffleboard(turret);
         SmartDashboard.putNumber("Spindexer Current", spindexer.getCurrent());
     }
