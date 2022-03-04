@@ -44,7 +44,7 @@ public class MultiPath extends SequentialCommandGroup {
                 Constants.swerveKinematics, xController, yController, thetaController,
                 Robot.swerveDrive::setModuleStates,
                 Robot.swerveDrive).andThen(new InstantCommand(() -> Robot.swerveDrive.drive(0, 0, 0)));
-        addCommands(new InstantCommand(() -> Robot.swerveDrive.resetOdometry(trajectory.getInitialPose())),
+        addCommands(new InstantCommand(() -> Robot.swerveDrive.resetOdometry(trajectory.getInitialPose(), trajectory.getInitialState().holonomicRotation)),
                 new ParallelCommandGroup(swerveControllerCommand,
                         new WaitCommand(trajectory.getTotalTimeSeconds() - 1)
                                 .andThen(Robot.spindexer.getSpindexerCommand(), Robot.intake.getIntakeCommand())),
